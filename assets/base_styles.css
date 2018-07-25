@@ -1,0 +1,496 @@
+body{
+  margin: 0;
+  font-family: 'Gaegu', cursive;
+}
+
+/* label[for='id_picklat'], label[for='id_picklong'], label[for='id_droplat'], label[for='id_droplong']
+{
+  display:none;
+}
+#id_picklat, #id_picklong, #id_droplat, #id_droplong{
+  display: none;
+} */
+
+/* #map_container{
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.9);
+} */
+
+/* styling the user's order page */
+#map{
+   width: 960px;
+   height: 420px;
+   border-radius: 10px;
+   box-shadow: 1px 2px 15px 2px;
+}
+
+#maps_form{
+  margin-top: 10px;
+}
+
+#id_pickup, #id_drop, #id_instructions, #id_contact_pick, #id_contact_drop{
+  margin-bottom: 10px;
+  border: none;
+  border-bottom: solid 1px #076D37;
+  outline: none;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.site-form label[for="id_picklat"], .site-form label[for="id_picklong"], .site-form label[for="id_droplat"], .site-form label[for="id_droplong"]{
+  display: none;
+}
+
+#id_picklat, #id_picklong, #id_droplat, #id_droplong{
+  display: none;
+}
+
+.gm-style-iw div div{
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.add_pickup{
+  background: transparent;
+  padding: 5px;
+  outline: none;
+  border: solid 1px #076D37;
+  border-radius: 30px;
+  float:left;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.add_drop{
+  background: transparent;
+  padding: 5px;
+  outline: none;
+  border: solid 1px #076D37;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.add_drop:hover, .add_pickup:hover {
+  border: none;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  padding: 6px;
+}
+
+/* Styling the base_layout */
+#wrapper{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: minmax(100px, auto);
+  grid-template-rows: auto 1fr auto;
+  grid-gap: 20px;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+#header{
+  grid-column: 1/4;
+  padding: 20px;
+  padding-top: 0;
+  padding-bottom: 0;
+  background: white;
+  box-shadow: 1px 0px 20px 0.1px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+#home_logo{
+  display: flex;
+  align-items: center;
+}
+
+#home_logo img{
+  height: 80px;
+  width: 150px;
+}
+
+#header nav{
+  grid-column: 3/4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style-type: none;
+}
+#header ul{
+  padding: 0;
+  margin: 0;
+}
+#header nav li{
+  list-style-type: none;
+}
+
+#header nav li button{
+  background: transparent;
+  padding: 10px;
+  outline: none;
+  border: solid 1px #076D37;
+  border-radius: 30px;
+}
+
+#header nav li button:hover{
+  cursor: pointer;
+  border: none;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  padding: 11px;
+}
+
+#section{
+  grid-column: 1/4;
+}
+
+/* Styling the Executive  */
+
+#orders{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px;
+  grid-template-rows: minmax(10px, auto);
+}
+
+#orders a{
+  text-decoration: none;
+  color: black;
+  /* border: solid 1px white; */
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 100%;
+  background: linear-gradient(to right, white, #e8e8e8);
+  box-shadow: 1px 2px 15px 2px;
+  letter-spacing: 1px;
+  font-size: 14px;
+}
+
+/* Styling the confirm page */
+#order-detail h1, h2, h3, h4, h5{
+  text-align: center;
+}
+
+.order a{
+  text-decoration: none;
+  color: black;
+  border: solid 1px #076D37;
+  padding : 10px;
+  border-radius: 30px;
+}
+
+.order a:hover{
+  border: none;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  padding: 11px;
+}
+
+/* Styling the execuive location page */
+#content{
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.exec_location_form label[for="id_Locationlat"], .exec_location_form label[for="id_Locationlong"]{
+  display: none;
+}
+
+#id_Locationlat, #id_Locationlong{
+  display: none;
+}
+
+.exec_location_form{
+  margin-top: 20px;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.exec_location_form input[type="submit"]{
+  background: transparent;
+  padding: 10px;
+  outline: none;
+  border: solid 1px #076D37;
+  margin-top: 10px;
+  border-radius: 30px;
+}
+
+.exec_location_form input[type="submit"]:hover{
+    border: none;
+    background: linear-gradient(to right, #076D37, #90CB24);
+}
+
+#executive_map{
+  border-radius: 10px;
+  box-shadow: 1px 2px 15px 2px;
+}
+
+/* styling the login page */
+.site-form{
+  grid-row: 2/4;
+  grid-column: 2/3;
+  display: flex;
+  flex-flow: column;
+  text-align: center;
+  align-items: center;
+}
+
+#id_username, #id_password{
+  margin-bottom: 10px;
+  border: none;
+  border-bottom: solid 1px #076D37;
+  outline: none;
+}
+
+.site-form input[type="submit"]{
+  background: transparent;
+  padding: 10px;
+  outline: none;
+  border: solid 1px #076D37;
+  margin-top: 10px;
+  border-radius: 30px;
+}
+
+.site-form input[type="submit"]:hover{
+  border: none;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  cursor: pointer;
+  /* padding: 11px; */
+}
+
+#login-page{
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+#login_art{
+  grid-column: 1/2;
+  grid-row: 1/4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#login_art img{
+  height: 480px;
+}
+
+#login-page h1{
+  grid-column: 2/3;
+}
+
+/* Styling the signup page */
+
+.signup-form{
+  display: flex;
+  flex-flow: column;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.signup-form br, .helptext{
+  display: none;
+}
+
+.signup-form input{
+  margin-bottom: 10px;
+  border: none;
+  border-bottom: solid 1px #076D37;
+  outline: none;
+}
+
+.signup-form input[type="submit"]{
+  background: transparent;
+  padding: 10px;
+  outline: none;
+  border: solid 1px #076D37;
+  margin-top: 10px;
+  border-radius: 30px;
+}
+
+.signup-form input[type="submit"]:hover{
+  border: none;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  cursor: pointer;
+}
+
+.errorlist li{
+  list-style-type: none;
+  color: #e85151;
+}
+
+#signup-page{
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+#signup_art{
+  grid-column: 1/2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#signup_art img{
+  height: 480px;
+}
+
+#signup-page h1{
+  grid-column: 2/3;
+}
+
+/* styling the final confirmation page for user */
+.exec_details_header{
+  border-bottom: solid 1px #076D37;
+  padding-bottom: 5px;
+}
+
+#executive_details{
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.exec_details_done{
+  text-decoration: none;
+  color: black;
+  border: solid 1px #076D37;
+  padding : 10px;
+  border-radius: 30px;
+  margin-bottom: 10px;
+}
+
+.exec_details_done:hover{
+  border: none;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  padding: 11px;
+}
+
+#timer{
+  border: 1px solid #e85151;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.timer_count{
+  font-weight: bolder;
+  font-size: 24px;
+  color: #e85151;
+}
+
+/* styling the user's homepage */
+#user_actions{
+  display: flex;
+  flex-flow: row;
+  padding: 30px;
+}
+
+#user_actions a{
+  text-decoration: none;
+  color: black;
+  border: solid 1px #076D37;
+  padding : 10px;
+  border-radius: 30px;
+  margin-left: 10px;
+}
+
+#user_actions a:hover{
+  border: none;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  padding: 11px;
+}
+
+.user_confirm_dashboard_link{
+  text-decoration: none;
+  color: black;
+  border: solid 1px #076D37;
+  padding : 10px;
+  border-radius: 30px;
+}
+
+.user_confirm_dashboard_link:hover{
+  border: none;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  padding: 11px;
+}
+
+.exec_location_form input{
+  margin-bottom: 10px;
+  border: none;
+  border-bottom: solid 1px #076D37;
+  outline: none;
+}
+
+#tc_heading h1{
+  border-bottom: solid 1px #076D37;
+  padding: 0;
+  text-align: center;
+  font-weight: lighter;
+}
+
+#tc_points h1{
+  color: #076D37;
+  font-weight: lighter;
+}
+
+#tc_confirmation{
+  display: flex;
+  flex-flow: row;
+}
+
+
+@media screen and (max-width: 720px){
+  #login_art img{
+    height: 240px;
+  }
+
+  #signup_art img{
+    height: 360px;
+  }
+
+  #home_logo img{
+    height: 40px;
+    width: 75px;
+  }
+
+  #orders{
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 5px;
+  }
+  #order-detail h1, h2, h3, h4, h5{
+    text-align: center;
+    font-size: 10px;
+  }
+
+  #user_actions{
+        flex-flow: column
+  }
+
+  #user_actions a{
+    margin-top: 10px;
+  }
+
+  #tc_heading h1{
+    font-size: 13px;
+  }
+}

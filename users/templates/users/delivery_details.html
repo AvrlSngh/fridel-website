@@ -1,0 +1,51 @@
+{% extends 'base_layout.html' %}
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script type="text/javascript">
+  window.onload = function(){
+      var timer_count = document.getElementsByClassName('timer_count')[0];
+      var timer_container = document.getElementById('timer');
+      var count = 60;
+      var timer = setInterval(function(){
+        count = count - 1;
+        timer_count.innerHTML = count;
+        if(count == 0)
+        {
+            clearInterval(timer);
+            timer_container.style.display = "None";
+            document.getElementsByClassName('exec_details_cancel')[0].click();
+
+        }
+      }, 1000);
+  }
+</script>
+<h1 style="border-bottom: solid 1px #076D37">Here Are Your Delivery Details</h1>
+<div id="executive_details">
+
+  {% if exec_read and user.is_authenticated%}
+  <h1>Total Delivery Charge will be: <b style="font-size: 32px;">₹ {{exec_coming.Amount}}</b></h1>
+  <h2>Time duration for Executive to Pickup : <b style="font-size: 30px;">{{exec_coming.Duration}}</b> minutes</h2>
+  <h2>Time duration for Pickup to Drop : <b style="font-size: 30px;">{{exec_coming.Duration_pick_drop}}</b> minutes</h2>
+  <a href="{% url 'users:final_confirmation' %}" class="exec_details_done"> Done</a>
+  <a href="{% url 'users:order_cancel' %}" style="color:grey; font-size: 12px;" class="exec_details_cancel">Cancel</a>
+  <div id="timer">
+    <h4>Choose either <b style="font-size: 20px; font-weight: bolder;">Done</b> or Cancel in <span class="timer_count"></span> seconds. Otherwise your request has been canceled automatically.</h4>
+  </div>
+  {% else %}
+  <script type="text/javascript">
+  window.onload = function(){
+  setInterval(function(){
+    document.location.reload(true);
+    console.log('reloading');
+  }, 5000);
+  }
+  </script>
+  <h3>Please wait while we find the best price and executive for you.</h3>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block title %}
+Fridel | Order Details
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+<div id="previous_orders">
+  <div id="previous_order">
+    {% for order in orders %}
+    <h2> <span style="color: #076D37">Pickup Location</span> : <b>{{order.pickup}}</b></h2>
+    <h2> <span style="color: #e85151">Drop Location</span> : <b>{{order.drop}}</b></h2>
+    <h3>Instructions : <b>{{order.instructions}}</b></h3>
+    <h4>Order Time : <b>{{order.order_time}}</b></h4>
+    <h4>Order Date : <b>{{order.date}}</b></h4>
+    <h4>Amount : ₹ {{order.amount}}</h4>
+    <h4>Duration from Executive to Pickup : {{order.duration_exec_pick}} minutes</h4>
+    <h4>Duration from Pickup to Drop : {{order.duration_pick_drop}} minutes</h4>
+    <h5>Complete Status :
+      {% if order.is_completed %}
+      <b>Completed</b>
+      {% else %}
+      <b>Not Completed</b>
+      {% endif %}
+    </h5>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block title %}
+Fridel | Order History
+{% endblock %}

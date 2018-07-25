@@ -1,0 +1,92 @@
+{% load static from staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Fridel | Friendly Deliveries</title>
+  <link rel="icon" href="{% static 'aibl_title_logo.png' %}">
+  <link rel="stylesheet" href="{% static 'home_styles.css' %}">
+  <link href="https://fonts.googleapis.com/css?family=Gaegu" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <script src="{% static 'main.js'%}"></script>
+
+</head>
+<body>
+  <div id="wrapper">
+  <header id="header">
+    <div id="home_logo">
+    <a href="{% url 'homepage' %}">
+      <img src="{% static 'fridel_logo.png' %}" alt="">
+    </a>
+    </div>
+    <div id="accounts_links">
+      <ul>
+        {% if not user.is_authenticated %}
+        <li class="login-link"><a href="{% url 'accounts:login'%}">Login</a></li>
+        <li class="signup-link"><a href="{% url 'accounts:signup'%}">Signup</a></li>
+        {% elif user.is_authenticated and user.is_executive %}
+        <li class="homepage_executive_dashboard"><a href="{% url 'executive:executive_user'%}">Go to Dashboard</a></li>
+        {% elif user.is_authenticated %}
+        <li class="homepage_user_dashboard"><a href="{% url 'users:normal_user' %}">Go to Dashboard</a></li>
+        {% endif %}
+
+      </ul>
+    </div>
+    <div id="site-bar">
+      <ul>
+        <li class="site-nav1" style="background: linear-gradient(to right, #076D37, #90CB24);">Your Pain</li>
+        <li class="site-nav2">Solution</li>
+        <li class="site-nav3">Next Steps</li>
+        <li class="site-nav4">Place Order</li>
+        <li class="site-nav5">Contact Us</li>
+      </ul>
+    </div>
+  </header>
+  <section id="section">
+  <div id="problem_section">
+    <div id="problem_text">
+    <div class="text1" style="display:block;"><h1>Got tired of roaming around the city for your daily personal and professional needs?</h1></div>
+    <div class="text2" style="display:none;"><h1> Relax, Fridel is here to help you out from your daily delivery needs. Now get rid from the tasks like Pickup and Drop of any items.</h1></div>
+    <div class="text3" style="display:none;">
+      <h1>Now, after you <a href="{% url 'accounts:signup'%}">signup</a> we can bring or deliver anything that you have forgotten, or want from any of your Friends/Relatives, even from your workspace from and to any part of Jaipur</h1>
+    </div>
+    <div class="text4" style="display:none;">
+      <h1>Hey, what are you waiting for place an order and invest your time in your important stuff, not in these daily unproductive delivery tasks. Right?</h1>
+      <h1><a href="{% url 'users:pickupdrop'%}">Place order</a></h1>
+    </div>
+    <div class="text5" style="display:none;">
+      <h1>Listen, Still Troubled?
+        <h2 style="color: #076D37; text-align: center;">Feel free to call us</h2>
+        <h3 style="color: #076D37; text-align: center; font-size: 24px;">+917891493322, +918005966488</h3>
+        <h4 style="font-size: 18px;">These Fridelers will surely sort out your remaining queries.😊</h4>
+      </h1>
+    </div>
+    </div>
+      <div id="problem_art">
+      <img src="{% static 'problem_art1.png' %}" alt="" id="problem_art_img">
+      </div>
+    </div>
+    </section>
+    <footer id="footer">
+      <div id="footer_wrapper">
+      <div id="footer_home_logo">
+      <a href="{% url 'homepage' %}">
+        <img src="{% static 'fridel_logo.png' %}" alt="">
+      </a>
+      </div>
+
+      <div id="footer_left">
+        <h3 style="text-align: center;"><a href="{% url 'terms' %}" style="text-decoration: none; color: #076D37;">Terms & Conditions</a></h3>
+      </div>
+
+      <div id="footer_right">
+          <h3 style="text-align: center;"><a href="{% url 'about' %}" style="text-decoration: none; color: #076D37;">About Us</a></h3>
+      </div>
+      </div>
+    </footer>
+    </div>
+  </body>
+  </html>

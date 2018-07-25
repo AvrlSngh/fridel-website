@@ -1,0 +1,30 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+{% load static from staticfiles %}
+<div id="login-page">
+  <h1 style="font-size:28px; text-align: center;">Login Here</h1>
+  <div id="login_art">
+    <img src="{% static 'problem_art7.png' %}" alt="">
+  </div>
+  <form action="" class="site-form" method="post" action="{% url 'accounts:login' %}">
+    {% csrf_token %}
+    {{form}}
+    {% if request.GET.next %}
+        <input type="hidden" name="next" value="{{request.GET.next}}">
+    {% endif %}
+    <input type="submit" value="Login">
+    <p style="font-size: 12px;">Not created account yet? <a href="{% url 'accounts:signup'%}" style="color: #268233">Create one Here</a></p>
+    {% if request.GET.next %}
+    <div class="warning">
+      <p style="padding: 0; margin: 0; font-size: 12px; color: #e85151;">! You need to login first !</p>
+    </div>
+    {% endif %}
+  </form>
+  </div>
+
+
+{% endblock %}
+{% block title %}
+Fridel | Login Here
+{% endblock %}

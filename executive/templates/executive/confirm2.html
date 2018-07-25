@@ -1,0 +1,282 @@
+{% extends 'base_layout.html' %}
+{% block content %}
+<h1>Enter your location and live location link.</h1>
+<div id="executive_map" style="height: 400px; width: 80%;"></div>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script>
+var map;
+var markers = [];
+
+function setexec_location(lat, lng, add){
+  document.getElementById('id_Locationlat').value = lat.toFixed(6);
+  document.getElementById('id_Locationlong').value = lng.toFixed(6);
+  document.getElementsByClassName('exec_cur_location')[0].value = add;
+}
+
+function initMap() {
+
+
+   var jaipur = {lat: 26.9124, lng: 75.7873};
+
+   map = new google.maps.Map(document.getElementById('executive_map'), {
+     zoom: 13,
+     center: jaipur,
+     mapTypeId: 'terrain'
+   });
+
+   // This event listener will call addMarker() when the map is clicked.
+   map.addListener('click', function(event) {
+     addMarker(event.latLng);
+   });
+
+   $(window).on('load', function() {
+    // code here
+
+    var exec_cur_location = document.getElementsByClassName('exec_cur_location')[0];
+
+    var cur_loc = {
+    lat : 26.922070,
+    lng :  75.778885
+    };
+    var circle = new google.maps.Circle({
+      center: cur_loc,
+      radius: 30
+    });
+
+    var cur_loc_places = new google.maps.places.Autocomplete(exec_cur_location);
+    cur_loc_places.setBounds(circle.getBounds());
+
+    google.maps.event.addListener(cur_loc_places, 'place_changed', function() {
+      var cur_loc_place = cur_loc_places.getPlace();
+      var cur_loc_address = cur_loc_place.formatted_address;
+      var geocoder = new google.maps.Geocoder();
+      document.getElementById('id_Locationlat').value = cur_loc_place.geometry.location.lat().toFixed(6);
+      document.getElementById('id_Locationlong').value = cur_loc_place.geometry.location.lng().toFixed(6);
+
+      if(geocoder){
+        geocoder.geocode({'address': cur_loc_address}, function(results, status){
+          if (status == google.maps.GeocoderStatus.OK) {
+             if (status != google.maps.GeocoderStatus.ZERO_RESULTS) {
+               map.setCenter(results[0].geometry.location);
+               map.setZoom(16);
+             }
+           }
+        });
+      }
+      else{
+        console.log('Geocode failed');
+      }
+    });
+
+   });
+
+ }
+
+ // Adds a marker to the map and push to the array.
+  function addMarker(location) {
+    var geocoder;
+    geocoder = new google.maps.Geocoder();
+
+    var marker = new google.maps.Marker({
+      position: location,
+      map: map
+    });
+    setMapOnAll(null);
+    markers.pop();
+    markers.push(marker);
+    var location_new = new google.maps.LatLng(location.lat(), location.lng());
+    console.log(location_new);
+    geocoder.geocode({'latLng': location}, function (results, status) {
+   if(status == google.maps.GeocoderStatus.OK) {           // if geocode success
+   var add=results[0].formatted_address;
+   var infowindow = new google.maps.InfoWindow({
+        content:add
+     });
+   infowindow.open(map,marker);
+   setexec_location(location.lat(), location.lng(), add);     // if address found, pass to processing function
+   }});
+ }
+
+  // Sets the map on all markers in the array.
+  function setMapOnAll(map) {
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+    }
+  }
+// origin_lat, origin_long, dest_lat, dest_long
+function get_distance(){
+  var picklat = document.getElementsByClassName('picklat')[0].value;
+  var picklong = document.getElementsByClassName('picklong')[0].value;
+  var droplat = document.getElementsByClassName('droplat')[0].value;
+  var droplong = document.getElementsByClassName('droplong')[0].value;
+  var execlat = document.getElementById('id_Locationlat').value;
+  var execlong = document.getElementById('id_Locationlong').value;
+
+
+ // origin - Executive | destination - pickup
+  var origin1 = new google.maps.LatLng(execlat, execlong);
+  var destination1 = new google.maps.LatLng(picklat, picklong);
+
+  var service = new google.maps.DistanceMatrixService();
+
+  service.getDistanceMatrix(
+    {
+      origins:[origin1],
+      destinations:[destination1],
+      travelMode: google.maps.TravelMode.DRIVING,
+      unitSystem: google.maps.UnitSystem.metric,
+      avoidHighways: false,
+      avoidTolls: false
+    }, callback1);
+
+    function callback1(response, status){
+      if(status != google.maps.DistanceMatrixStatus.OK){
+        alert(err);
+      }
+      else{
+        var origin = response.originAddresses[0];
+        var destination = response.destinationAddresses[0];
+        if(response.rows[0].elements[0].status === "ZERO_RESULTS"){
+          alert("Better get on a plane");
+        }
+        else{
+          var distance = response.rows[0].elements[0].distance;
+          var duration =  response.rows[0].elements[0].duration;
+          var distance_in_kilo = distance.value/1000;
+          var duration_in_minutes = duration.value/60;
+          document.getElementsByClassName('dist_exec_pick')[0].value = distance_in_kilo;
+          document.getElementById('id_Duration').value = Math.ceil(duration_in_minutes);
+        }
+      }
+    }
+
+  // origin - Executive | destination - drop
+   var origin2 = new google.maps.LatLng(execlat, execlong);
+   var destination2 = new google.maps.LatLng(droplat, droplong);
+
+    service.getDistanceMatrix(
+      {
+        origins:[origin2],
+        destinations:[destination2],
+        travelMode: google.maps.TravelMode.DRIVING,
+        unitSystem: google.maps.UnitSystem.metric,
+        avoidHighways: false,
+        avoidTolls: false
+      }, callback2);
+
+      function callback2(response, status){
+        if(status != google.maps.DistanceMatrixStatus.OK){
+          alert(err);
+        }
+        else{
+          var origin = response.originAddresses[0];
+          var destination = response.destinationAddresses[0];
+          if(response.rows[0].elements[0].status === "ZERO_RESULTS"){
+            alert("Better get on a plane");
+          }
+          else{
+            var distance = response.rows[0].elements[0].distance;
+            var distance_in_kilo = distance.value/1000;
+            document.getElementsByClassName('dist_exec_drop')[0].value = distance_in_kilo;
+          }
+        }
+      }
+
+    // origin - pickup | destination - drop
+     var origin3 = new google.maps.LatLng(picklat, picklong);
+     var destination3 = new google.maps.LatLng(droplat, droplong);
+
+      service.getDistanceMatrix(
+        {
+          origins:[origin3],
+          destinations:[destination3],
+          travelMode: google.maps.TravelMode.DRIVING,
+          unitSystem: google.maps.UnitSystem.metric,
+          avoidHighways: false,
+          avoidTolls: false
+        }, callback3);
+
+        function callback3(response, status){
+          if(status != google.maps.DistanceMatrixStatus.OK){
+            alert(err);
+          }
+          else{
+            var origin = response.originAddresses[0];
+            var destination = response.destinationAddresses[0];
+            if(response.rows[0].elements[0].status === "ZERO_RESULTS"){
+              alert("Better get on a plane");
+            }
+            else{
+              var distance = response.rows[0].elements[0].distance;
+              var duration =  response.rows[0].elements[0].duration;
+              var distance_in_kilo = distance.value/1000;
+              var duration_in_minutes = duration.value/60;
+              document.getElementsByClassName('dist_drop_pick')[0].value = distance_in_kilo;
+              document.getElementById('id_Duration_pick_drop').value = Math.ceil(duration_in_minutes);
+            }
+          }
+        }
+      }
+
+window.onload = function(){
+  document.getElementById('id_live_location').setAttribute("style", "display: none;");
+  document.getElementById('id_Amount').readOnly = true;
+  document.getElementById('id_Duration').readOnly = true;
+  document.getElementById('id_Duration_pick_drop').readOnly = true;
+
+
+  document.getElementById('executive_map').onclick = function(){
+  document.getElementById('id_live_location').style.display = "block";
+  }
+
+  document.getElementById('id_live_location').oninput = function(){
+      get_distance();
+      var myInterval = setInterval(dist_pick, 1000);
+      function dist_pick(){
+      var dist_exec_pick = document.getElementsByClassName('dist_exec_pick')[0].value;
+      var dist_exec_drop = document.getElementsByClassName('dist_exec_drop')[0].value;
+      var dist_drop_pick = document.getElementsByClassName('dist_drop_pick')[0].value;
+      if(dist_exec_pick != " " && dist_exec_drop != " " && dist_drop_pick != " "){
+        console.log(dist_exec_pick, dist_exec_drop, dist_drop_pick);
+        var amount = dist_exec_pick*2.7 + dist_exec_drop*2.7 + dist_drop_pick*2.7;
+        if(amount <= 15){
+          document.getElementById('id_Amount').value = 15;
+        }
+        else{
+          document.getElementById('id_Amount').value = Math.ceil(amount);
+        }
+        clearInterval(myInterval);
+      }
+    }
+}
+}
+
+
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDV--RWSFF8_6LWSGPd4fTAzI5RylVF2c0&callback=initMap"
+  async defer></script>
+
+<div id="exec_location">
+  <input type="text" value="{{order.picklat}}" class="picklat" style="display: none;">
+  <input type="text" value="{{order.picklong}}" class="picklong" style="display: none;">
+  <input type="text" value="{{order.droplat}}" class="droplat" style="display: none;">
+  <input type="text" value="{{order.droplong}}" class="droplong" style="display: none;">
+  <input type="text" value = "" class = "dist_exec_pick" style="display: none;">
+  <input type="text" value = "" class = "dist_exec_drop" style="display: none;">
+  <input type="text" value = "" class = "dist_drop_pick" style="display: none;">
+
+
+  <form action="{% url 'executive:executive_location' %}" method="post" class="exec_location_form" autocomplete="off">
+      <label for="exec_cur_location">Current Location:</label>
+    <input type="text" value = "" class="exec_cur_location" size="50">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" name="" value="Continue">
+  </form>
+</div>
+{% endblock %}
+
+{% block title %}
+Fridel | Amount Calculation
+{% endblock %}

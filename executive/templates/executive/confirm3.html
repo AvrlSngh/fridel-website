@@ -1,0 +1,60 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+    <h1>{{canceled_text}}{{executive_wait_text}}{{user_agree_text}}</h1>
+  <!-- <h1></h1>
+      <h1></h1> -->
+      {% if user_read %}
+      <h2 style="border-bottom: solid 1px #076D37;">Here are the details of Order</h2>
+      <h2><b>Customer's Contact</b> : {{customer_phone}} </h2>
+      <h3><b style="color: #076D37">Pickup Point</b> : {{order.pickup}} <input type="text" value="{{order.picklat}}, {{order.picklong}}" id="pick_coords"><button data-copytarget="#pick_coords">Copy Pick</button></h3>
+      <h3><b style="color: #076D37">Contact Person at Pickup:</b> {{order.contact_pick}}</h3>
+      <h3><b style="color: #e85151">Drop Point</b> : {{order.drop}} <input type="text" value="{{order.droplat}}, {{order.droplong}}" id="drop_coords" ><button data-copytarget="#drop_coords">Copy Drop</button></h3>
+      <h3><b style="color: #e85151">Contact Person at Drop:</b> {{order.contact_drop}}</h3>
+      <h4>Amount : ₹ {{exec_coming.Amount}}</h4>
+      <h4>Time for Executive to Pickup : {{exec_coming.Duration}} minutes</h4>
+      <h4>Time for Pickup to Drop : {{exec_coming.Duration_pick_drop}} minutes</h4>
+      <a href="{% url 'executive:executive_user'%}" class="user_confirm_dashboard_link">Go to Dashboard</a>
+      {% elif canceled_text %}
+      <a href="{% url 'executive:executive_user'%}" class="user_confirm_dashboard_link">Go to Dashboard</a>
+      {% else %}
+      <script type="text/javascript">
+      window.onload = function(){
+      setInterval(function(){
+        document.location.reload(true);
+        console.log('reloading');
+      }, 5000);
+      }
+      </script>
+      {% endif %}
+
+      <script type="text/javascript">
+        (function() {
+          'use strict';
+
+          document.body.addEventListener('click', copy, true);
+
+          function copy(e){
+
+            var t = e.target, c = t.dataset.copytarget,
+            inp = (c ? document.querySelector(c) : null);
+
+            if(inp && inp.select) {
+              inp.select();
+
+              try {
+                document.execCommand('copy');
+                inp.blur();
+              }
+              catch (err){
+                alert('please use keyboard!!');
+              }
+            }
+
+          }
+        })();
+      </script>
+{% endblock %}
+{% block title %}
+Fridel | User Confirmation
+{% endblock %}

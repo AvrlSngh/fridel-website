@@ -1,0 +1,28 @@
+{% extends 'base_layout.html' %}
+{% block content %}
+<div id="order_detail">
+  <div class="order">
+    <h2 style="color: #076D37">{{order.pickup}}</h2>
+    <h2 style="color: #e85151">{{order.drop}}</h2>
+    <h3>{{order.instructions}}</h3>
+    <h4>{{order.order_time}}</h4>
+    <h4>{{order.date}}</h4>
+    <h5>{{order.user}}</h5>
+    <h5>
+    {% if order.is_completed %}
+    <b>Completed</b>
+    {% else %}
+    <b>Not Completed</b>
+    <br><br>
+    <form  method="post" action="">
+      {% csrf_token %}
+    <button type="submit">Continue</button>
+    </form>
+    {% endif %}
+   </h5>
+  </div>
+</div>
+{% endblock %}
+{% block title %}
+Fridel | Order View
+{% endblock %}

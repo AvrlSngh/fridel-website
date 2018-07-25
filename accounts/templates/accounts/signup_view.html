@@ -1,0 +1,50 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+{% load static from staticfiles %}
+<script type="text/javascript">
+  window.onload = function(){
+    var phone = document.getElementById('id_phone');
+    var format = /^\d{10}$/;
+    phone.onblur = function() {
+      if(!phone.value.match(format))
+        {
+          alert('Phone is not valid. Make sure it is a 10 digit number.')
+        }
+    }
+  }
+
+  function check_tc(){
+
+        var checkbox = document.getElementById('tc_check');
+        var signup_button = document.getElementById('signup_button');
+
+        if(checkbox.checked == true){
+          signup_button.disabled = false;
+        }
+        else{
+          signup_button.disabled = true;
+        }
+  }
+</script>
+<div id="signup-page">
+    <h1 style="text-align: center;">Signup Here</h1>
+  <div id="signup_art">
+    <img src="{% static 'problem_art6.png' %}" alt="">
+  </div>
+  <form method="post" action="{% url 'accounts:signup'%}" class="signup-form">
+
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Signup" id="signup_button" disabled>
+    <div id="tc_confirmation">
+      <input type="checkbox" id="tc_check" onclick="check_tc()">
+      <span><p style="padding: 0; font-size: 12px; margin-top: 0;">I by signing up, agree to <a href="{% url 'terms' %}" target="_blank" style="color: #268233">Terms & Conditions</a> of Fridel.</p></span>
+    </div>
+    <p style="padding: 0; margin: 0; font-size: 12px;">Have one already? Then <a href="{% url 'accounts:login' %}" style="color: #268233">Login here</a></p>
+  </form>
+  </div>
+{% endblock %}
+{% block title %}
+Fridel | Signup Here
+{% endblock %}

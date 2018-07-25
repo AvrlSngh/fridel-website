@@ -1,0 +1,181 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+<!-- <h1>Welcome Normal User. You are so normal!!</h1> -->
+<!-- Maps in the users order page -->
+<h1 style="text-align: center;">Enter the Pickup and Drop points and also some instructions.</h1>
+<div id="map_container">
+<div id="map"></div>
+</div>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script>
+
+var map;
+var markers = [];
+var lat = 0, lng = 0, full_add='';
+
+function setpick(){
+  var pickup = document.getElementById('id_pickup');
+  var picklat = document.getElementById('id_picklat');
+  var picklong = document.getElementById('id_picklong');
+
+    addMarker();
+
+  picklat.value = lat;
+  picklong.value = lng;
+  pickup.value = full_add;
+}
+
+function setdrop(){
+  var drop = document.getElementById('id_drop');
+  var droplat = document.getElementById('id_droplat');
+  var droplong = document.getElementById('id_droplong');
+
+  addMarker();
+
+  droplat.value = lat;
+  droplong.value = lng;
+  drop.value = full_add;
+}
+
+
+function initMap() {
+  var pickup = document.getElementById('id_pickup');
+  pickup.setAttribute("size", 50);
+
+  var drop = document.getElementById('id_drop');
+  drop.setAttribute("size", 50);
+
+  document.getElementById("id_contact_pick").setAttribute("placeholder", "Contact of pickup");
+  document.getElementById("id_contact_drop").setAttribute("placeholder", "Contact of drop");
+
+
+  var jaipur = {lat: 26.9124, lng: 75.7873};
+
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 13,
+    center: jaipur,
+    mapTypeId: 'terrain'
+  });
+
+  // This event listener will call addMarker() when the map is clicked.
+  map.addListener('click', function(event) {
+    addMarker(event.latLng);
+  });
+
+    window.onload = function() {
+      var pickup = document.getElementById('id_pickup');
+      var drop = document.getElementById('id_drop');
+      pickup.focus();
+      var cur_loc = {
+      lat : 26.922070,
+      lng :  75.778885
+      };
+      var circle = new google.maps.Circle({
+        center: cur_loc,
+        radius: 30
+      });
+      var from_places = new google.maps.places.Autocomplete(pickup);
+      var to_places = new google.maps.places.Autocomplete(drop);
+      from_places.setBounds(circle.getBounds());
+
+      google.maps.event.addListener(from_places, 'place_changed', function() {
+        var from_place = from_places.getPlace();
+        var from_address  = from_place.formatted_address;
+        var geocoder = new google.maps.Geocoder();
+        document.getElementById('id_picklat').value =   from_place.geometry.location.lat().toFixed(6);
+        document.getElementById('id_picklong').value = from_place.geometry.location.lng().toFixed(6);
+        $('#origin').val(from_address);
+        if(geocoder){
+           geocoder.geocode({'address':from_address}, function(results, status){
+             if (status == google.maps.GeocoderStatus.OK) {
+                if (status != google.maps.GeocoderStatus.ZERO_RESULTS) {
+                map.setCenter(results[0].geometry.location);
+                map.setZoom(16);
+              }
+            }
+           });
+         }
+      });
+
+
+      to_places.setBounds(circle.getBounds());
+      google.maps.event.addListener(to_places, 'place_changed', function(){
+        var to_place = to_places.getPlace();
+        var to_address = to_place.formatted_address;
+        var geocoder = new google.maps.Geocoder();
+        document.getElementById('id_droplat').value =   to_place.geometry.location.lat().toFixed(6);
+        document.getElementById('id_droplong').value = to_place.geometry.location.lng().toFixed(6);
+        $('#destination').val(to_address);
+        if(geocoder){
+           geocoder.geocode({'address':to_address}, function(results, status){
+             if (status == google.maps.GeocoderStatus.OK) {
+                if (status != google.maps.GeocoderStatus.ZERO_RESULTS) {
+                map.setCenter(results[0].geometry.location);
+                map.setZoom(16);
+              }
+            }
+           });
+         }
+      });
+}
+
+ }
+
+// Adds a marker to the map and push to the array.
+var addMarker = function (location) {
+   var geocoder;
+   geocoder = new google.maps.Geocoder();
+   var marker = new google.maps.Marker({
+     position: location,
+     map: map
+   });
+   setMapOnAll(null);
+   markers.pop();
+   markers.push(marker);
+   geocoder.geocode({'latLng': location}, function (results, status) {
+  if(status == google.maps.GeocoderStatus.OK) {           // if geocode success
+ var add = results[0].formatted_address;
+  var infowindow = new google.maps.InfoWindow({
+       content:" "
+    });
+
+    lat = location.lat().toFixed(6);
+    lng = location.lng().toFixed(6);
+    full_add = results[0].formatted_address;
+    infowindow.setContent(add + '<button class = "add_pickup" onclick = "setpick()">Add to Pickup</button>' + '<button class = "add_drop" onclick = "setdrop()">Add to Drop</button>');
+    infowindow.open(map,marker);
+
+}
+
+});
+
+}
+
+ // Sets the map on all markers in the array.
+ function setMapOnAll(map) {
+   for (var i = 0; i < markers.length; i++) {
+     markers[i].setMap(map);
+   }
+ }
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDV--RWSFF8_6LWSGPd4fTAzI5RylVF2c0&callback=initMap"
+  async defer></script>
+
+  <div id="maps_form">
+    <form action="{% url 'users:pickupdrop' %}" method="post" class="site-form" autocomplete="off">
+      {% csrf_token %}
+      {{ form }}
+      <input type="hidden" id="destination" name="destination" required>
+      <input type="hidden" id="origin" name="origin" required>
+      <input type="submit" name="" value="Continue">
+    </form>
+  </div>
+
+{% endblock %}
+
+{% block title %}
+Fridel | Place Order
+{% endblock %}

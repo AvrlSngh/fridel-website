@@ -1,0 +1,50 @@
+{% load static from staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>
+    {% block title %}
+    {% endblock %}
+  </title>
+  <link rel="icon" href="{% static 'aibl_title_logo.png' %}">
+  <link rel="stylesheet" href="{% static 'base_styles.css' %}">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
+</head>
+<body>
+  <div id="wrapper">
+  <header id="header">
+    <div id="home_logo">
+    <a href="{% url 'homepage' %}">
+      <img src="{% static 'fridel_logo.png' %}" alt="">
+    </a>
+    </div>
+    {% block header_content%}
+
+    {% endblock %}
+    {% if user.is_authenticated %}
+    <nav>
+      <ul>
+        <li>
+          <form class="logout-link" action="{% url 'accounts:logout'%}" method="post">
+            {% csrf_token %}
+            <button type="submit ">Logout</button>
+          </form>
+        </li>
+      </ul>
+    </nav>
+    {% endif %}
+  </header>
+  <section id="section">
+    <div id="content">
+      {% block content%}
+
+      {% endblock %}
+    </div>
+  </section>
+</div>
+</body>
+</html>

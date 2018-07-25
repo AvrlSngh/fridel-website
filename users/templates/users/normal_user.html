@@ -1,0 +1,13 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+  <div id="user_actions">
+    <a href="{% url 'users:pickupdrop'%}">Place an Order</a>
+    <a href="https://goo.gl/forms/v2cBZ0uoyZLkQ4t72" target="_blank">Give FeedBack</a>
+    <a href="{% url 'users:orders_history'%}">Order History</a>
+  </div>
+{% endblock %}
+
+{% block title %}
+Fridel | {{customer}} dashboard
+{% endblock %}

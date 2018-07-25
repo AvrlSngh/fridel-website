@@ -1,0 +1,48 @@
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+{% block content %}
+<!-- <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script> -->
+<script type="text/javascript">
+window.onload = function(){
+setInterval(function(){
+  document.location.reload(true);
+  console.log('reloading');
+}, 5000);
+}
+</script>
+<h1 style="text-align: center;">Welcome <span style="color: #076D37">{{user}}</span>. You have so many responsibilities.</h1>
+<div id="orders">
+  {% csrf_token %}
+  {% for order in orders %}
+      {% if order.is_seen %}
+      <a href="{% url 'executive:order_detail' id=order.id %}" onclick="return false" style="opacity: 0.5; cursor: auto;">
+      {% else %}
+      <a href="{% url 'executive:order_detail' id=order.id %}">
+      {% endif %}
+      <div id="order">
+        <h2> <span style="color: #076D37">Pickup Location</span> : <b>{{order.pickup}}</b></h2>
+        <h2> <span style="color: #e85151">Drop Location</span> : <b>{{order.drop}}</b></h2>
+        <!-- <h3>Instructions : <b>{{order.instructions}}</b></h3> -->
+        <h4>Order Time : <b>{{order.order_time}}</b></h4>
+        <!-- <h4>Order Date : <b>{{order.date}}</b></h4> -->
+        <!-- <h5>User : <b>{{order.user}}</b></h5> -->
+        <h5>Complete Status :
+          {% if order.is_completed %}
+          <b>Completed</b>
+          {% else %}
+          <b>Not Completed</b>
+          {% endif %}
+        </h5>
+        {% if order.is_canceled %}
+        <b style="color:#e85151; font-size: 18px; font-family: sans-serif; font-weight: bolder; margin: 0; padding: 0;">Canceled</b>
+        {% endif %}
+      </div>
+      </a>
+  {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block title %}
+Fridel | {{user}} dashboard
+{% endblock %}
