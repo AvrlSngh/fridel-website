@@ -1,20 +1,131 @@
 {% extends 'base_layout.html' %}
 
 {% block content %}
-    <h1>{{canceled_text}}{{executive_wait_text}}{{user_agree_text}}</h1>
+<script>
+  window.onload = function() {
+  var other_task_detail = JSON.parse(document.getElementsByName('other_task_detail')[0].value);
+  for(var i=0;i<other_task_detail.stops.length;i++)
+  {
+    var li1 = document.createElement("li");
+    var li2 = document.createElement("li");
+    var li3 = document.createElement("li");
+    var li4 = document.createElement("li");
+    var li5 = document.createElement("li");
+    var a = document.createElement('a');
+    var b = document.createElement('a');
+
+    var t = document.createTextNode(other_task_detail.stops[i].task);
+    li1.appendChild(t);
+
+    t = document.createTextNode(other_task_detail.stops[i].address);
+    b.appendChild(t);
+    li2.appendChild(b);
+
+    var map_url = "https://www.google.com/maps/dir/?api=1&origin=&destination=";
+    map_url += other_task_detail.stops[i].stop_location_lat.toString() + ',' + other_task_detail.stops[i].stop_location_lng.toString() + '&travelmode=driving';
+
+    b.setAttribute('href', map_url);
+    b.setAttribute('target','_blank');
+
+    t = document.createTextNode(other_task_detail.stops[i].flatNum);
+    li3.appendChild(t);
+
+    t = document.createTextNode(other_task_detail.stops[i].landmark);
+    li4.appendChild(t);
+
+    t = document.createTextNode(other_task_detail.stops[i].contact);
+    a.appendChild(t);
+    li5.appendChild(a);
+    var tel = 'tel:+91';
+    tel += other_task_detail.stops[i].contact.toString();
+
+    a.setAttribute('href', tel);
+    a.setAttribute('target','_blank');
+
+    li1.setAttribute('id', 'other_task_list_parent');
+
+    li1.appendChild(li2);
+    li1.appendChild(li3);
+    li1.appendChild(li4);
+    li1.appendChild(li5);
+    document.getElementById('other_task_each_stop').appendChild(li1);
+  }
+  }
+</script>
+<textarea name="other_task_detail" rows="8" cols="80" style="display:none;">
+  {{order.task_detail}}
+</textarea>
+  {% if cancelled_text or executive_wait_text %}
+    <h1>{{canceled_text}}{{executive_wait_text}}</h1>
+  {% endif %}
   <!-- <h1></h1>
       <h1></h1> -->
       {% if user_read %}
       <h2 style="border-bottom: solid 1px #076D37;">Here are the details of Order</h2>
       <h2><b>Customer's Contact</b> : {{customer_phone}} </h2>
-      <h3><b style="color: #076D37">Pickup Point</b> : {{order.pickup}} <input type="text" value="{{order.picklat}}, {{order.picklong}}" id="pick_coords"><button data-copytarget="#pick_coords">Copy Pick</button></h3>
-      <h3><b style="color: #076D37">Contact Person at Pickup:</b> {{order.contact_pick}}</h3>
-      <h3><b style="color: #e85151">Drop Point</b> : {{order.drop}} <input type="text" value="{{order.droplat}}, {{order.droplong}}" id="drop_coords" ><button data-copytarget="#drop_coords">Copy Drop</button></h3>
-      <h3><b style="color: #e85151">Contact Person at Drop:</b> {{order.contact_drop}}</h3>
-      <h4>Amount : ₹ {{exec_coming.Amount}}</h4>
-      <h4>Time for Executive to Pickup : {{exec_coming.Duration}} minutes</h4>
-      <h4>Time for Pickup to Drop : {{exec_coming.Duration_pick_drop}} minutes</h4>
+      {% if order.other_task %}
+        <div id="other_task_list">
+            <ul id="other_task_each_stop">
+
+            </ul>
+        </div>
+      {% else%}
+      <div id="order_final_details">
+      <h3><b style="color: #076D37">Pickup Point</b> : {{order.pickup}} &nbsp&nbsp
+      <a href="https://maps.google.com/?q={{order.picklat}}, {{order.picklong}}" target="_blank" style="text-decoration: none;
+      color: black;
+      border: none;
+      background: linear-gradient(to right, #076D37, #90CB24);
+      padding : 10px;
+      border-radius: 30px;
+      margin-left: 10px;">Navigate Pickup</a>
+    </h3>
+    {% if order.pickup_home_number %}
+    <h3><b style="color: #076D37">House/Flat No.:</b> {{order.pickup_home_number}} </h3>
+    {% endif %}
+    {% if order.pickup_home_number %}
+    <h3><b style="color: #076D37">Building/Apartment Name:</b> {{order.pickup_landmark}} </h3>
+    {% endif %}
+      <h3><b style="color: #076D37">Contact Person at Pickup:</b> {{order.contact_pick}} &nbsp&nbsp  <a href="tel:{{order.contact_pick}}" style="text-decoration: none;
+      color: black;
+      border: none;
+      background: linear-gradient(to right, #076D37, #90CB24);
+      padding : 10px;
+      border-radius: 30px;
+      margin-left: 10px;" target="_blank">  Call Pickup</a></h3>
+
+      <br><br>
+      <h3><b style="color: #e85151">Drop Point</b> : {{order.drop}}  &nbsp&nbsp
+      <a href="https://maps.google.com/?q={{order.droplat}}, {{order.droplong}}" target="_blank" style="text-decoration: none;
+      color: black;
+      border: none;
+      background: linear-gradient(to right, #076D37, #90CB24);
+      padding : 10px;
+      border-radius: 30px;
+      margin-left: 10px;">Navigate Drop</a>
+    </h3>
+    {% if order.drop_home_number %}
+    <h3><b style="color: #e85151">House/Flat No.:</b> {{order.drop_home_number}} </h3>
+    {% endif %}
+    {% if order.drop_landmark %}
+    <h3><b style="color: #e85151">Building/Apartment Name:</b> {{order.drop_landmark}} </h3>
+    {% endif %}
+      <h3><b style="color: #e85151">Contact Person at Drop:</b> {{order.contact_drop}} &nbsp&nbsp<a href="tel:{{order.contact_drop}}" style="text-decoration: none;
+      color: black;
+      border: none;
+      background: linear-gradient(to right, #076D37, #90CB24);
+      padding : 10px;
+      border-radius: 30px;
+      margin-left: 10px;" target="_blank">  Call Drop</a></h3>
+      {% endif %}
+
+      <br><br>
+      <h2>Amount : ₹ {{exec_coming.Amount}}</h2>
+      <h2>Time for Executive to Pickup : {{exec_coming.Duration}} minutes</h2>
+      <h2>Time for Pickup to Drop : {{exec_coming.Duration_pick_drop}} minutes</h2>
+      </div>
       <a href="{% url 'executive:executive_user'%}" class="user_confirm_dashboard_link">Go to Dashboard</a>
+
       {% elif canceled_text %}
       <a href="{% url 'executive:executive_user'%}" class="user_confirm_dashboard_link">Go to Dashboard</a>
       {% else %}
@@ -28,32 +139,6 @@
       </script>
       {% endif %}
 
-      <script type="text/javascript">
-        (function() {
-          'use strict';
-
-          document.body.addEventListener('click', copy, true);
-
-          function copy(e){
-
-            var t = e.target, c = t.dataset.copytarget,
-            inp = (c ? document.querySelector(c) : null);
-
-            if(inp && inp.select) {
-              inp.select();
-
-              try {
-                document.execCommand('copy');
-                inp.blur();
-              }
-              catch (err){
-                alert('please use keyboard!!');
-              }
-            }
-
-          }
-        })();
-      </script>
 {% endblock %}
 {% block title %}
 Fridel | User Confirmation

@@ -3,13 +3,23 @@
 {% block content %}
 <h3 style="color: #e85151">*Do not close or go back from this page until your order is arrived*</h3>
 <h1 class="exec_details_header">Here are the details of the executive coming to you.</h1>
+
 <h2>Mr. <b>{{exec_details.first_name}} {{exec_details.last_name}}</b></h2>
+
 <h3>{{exec_details.phone}}</h3>
+
 <h4><a href="{{exec_coming.live_location}}" style="color: #076D37">Track Our Executive</a></h4>
+
 <h4>Price To Pay : ₹ <b>{{exec_coming.Amount}}</b></h4>
+
 <h4>Time duration for Executive to pickup location is : <b>{{exec_coming.Duration}} minutes</b>.</h4>
+
+{% if is_other %}
+<h4>Total estimated time for your tasks is : <b>{{exec_coming.Duration_pick_drop}} minutes</b>.</h4>
+{% else %}
 <h4>Time duration for pickup to drop is : <b>{{exec_coming.Duration_pick_drop}} minutes</b>.</h4>
-<h4></h4>
+{% endif %}
+
 <a href="{% url 'users:normal_user'%}" class="user_confirm_dashboard_link">Go to Dashboard</a>
 {% endblock %}
 

@@ -1,0 +1,390 @@
+
+{% extends 'base_layout.html' %}
+{% load static from staticfiles %}
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script>
+var markers = [];
+var stop_data = {stops:[]};
+var count = 0;
+window.onload = function(){
+  document.getElementById('stop_continue').disabled = true;
+}
+// Click on a close button to hide the current list item
+var close = document.getElementsByClassName("close");
+var i,j;
+for (i = 0; i < close.length; i++) {
+  close[i].onclick = function() {
+    var div = this.parentElement;
+    div.style.display = "none";
+
+
+    for(j=0; j<stop_data.stops.length; j++)
+    {
+      if(this.id == stop_data.stops[j].id)
+      {
+        stop_data.stops.splice(j, 1);
+        console.log("i in the loop");
+        j=0;
+        break;
+      }
+    }
+
+    // stop_data.stops.splice(this.id-1, 1);
+    document.getElementById('id_task_detail').value = JSON.stringify(stop_data);
+    count = count - 1;
+
+    // Condition for continue button to activate
+    if(count>=2)
+    {
+      document.getElementById('stop_continue').disabled = false;
+    }
+    else{
+      document.getElementById('stop_continue').disabled = true;
+    }
+  }
+}
+
+function newElement() {
+
+  var li1 = document.createElement("li");
+  var li2a = document.createElement("li");
+  var li2 = document.createElement("li");
+  var li2b = document.createElement("li");
+  var li3 = document.createElement("li");
+  var stop_task = document.getElementById("stop_task").value;
+  var stop_location = document.getElementById("stop_location").value;
+  var stop_contact = document.getElementById('stop_contact').value;
+  var stop_flatNum = document.getElementById('stop_flatNum').value;
+  var stop_landmark = document.getElementById('stop_landmark').value;
+  var stop_location_lat = document.getElementById('stop_location_lat').value;
+  var stop_location_lng = document.getElementById('stop_location_lng').value;
+  var t = document.createTextNode(stop_task);
+  li1.appendChild(t);
+  li1.setAttribute('id', 'stop_point')
+  t = document.createTextNode(stop_flatNum);
+  li2a.appendChild(t);
+  t = document.createTextNode(stop_location);
+  li2.appendChild(t);
+  t = document.createTextNode(stop_landmark);
+  li2b.appendChild(t);
+  t = document.createTextNode(stop_contact);
+  li3.appendChild(t);
+  if (stop_task === '' || stop_location === '' || stop_contact === '' || stop_flatNum === '') {
+    alert("You must fill all necessary fields!");
+  } else {
+    count = count+1;
+    var span = document.createElement("SPAN");
+    var txt = document.createElement("i");
+    span.className = "close";
+    span.setAttribute('id', count);
+    txt.setAttribute('class', 'fas fa-trash-alt');
+    span.appendChild(txt);
+
+    // Condition for continue button to activate
+    if(count>=2)
+    {
+      document.getElementById('stop_continue').disabled = false;
+    }
+    else{
+      document.getElementById('stop_continue').disabled = true;
+    }
+
+    var each_stop = document.getElementById("each_stop");
+    li1.appendChild(span);
+    each_stop.appendChild(li1);
+    li1.appendChild(li2a);
+    li1.appendChild(li2);
+    li1.appendChild(li2b);
+    li1.appendChild(li3);
+    stop_data.stops.push({id: count, task: stop_task, address: stop_location, flatNum: stop_flatNum, landmark: stop_landmark, stop_location_lat: stop_location_lat, stop_location_lng:stop_location_lng, contact: stop_contact});
+    document.getElementById('id_task_detail').value = JSON.stringify(stop_data);
+  }
+  document.getElementById("stop_task").value = "";
+  document.getElementById("stop_location").value = "";
+  document.getElementById('stop_contact').value = "";
+  document.getElementById('stop_flatNum').value = "";
+  document.getElementById('stop_landmark').value = "";
+  document.getElementById('stop_location_lat').value = "";
+  document.getElementById('stop_location_lng').value = "";
+
+var j;
+	for (i = 0; i < close.length; i++) {
+    close[i].onclick = function() {
+      var div = this.parentElement;
+      div.style.display = "none";
+
+      for(j=0; j<stop_data.stops.length; j++)
+      {
+        if(this.id == stop_data.stops[j].id)
+        {
+          stop_data.stops.splice(j, 1);
+          console.log("i in the loop");
+          j=0;
+          break;
+        }
+      }
+
+      // stop_data.stops.splice(this.id-1, 1);
+      document.getElementById('id_task_detail').value = JSON.stringify(stop_data);
+      count = count - 1;
+      // Condition for continue button to activate
+      if(count>=2)
+      {
+        document.getElementById('stop_continue').disabled = false;
+      }
+      else{
+        document.getElementById('stop_continue').disabled = true;
+      }
+    }
+  }
+
+
+  document.getElementById('id_other_task').checked = true;
+
+}
+
+
+</script>
+<script>
+
+function getCurrentLoc(){
+  var latlng;
+  if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  }
+  else{
+    alert("Location is not supported by your browser.");
+  }
+  function showPosition(position) {
+    latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    var geocoder = new google.maps.Geocoder;
+    var stop_location =
+    geocoder.geocode({'location': latlng}, function(results, status){
+      if(status === 'OK')
+      {
+        if(results[0]){
+          document.getElementById('stop_location').value = results[0].formatted_address;
+        }
+        else{
+          window.alert('Unable to find current location!');
+        }
+      }
+      else{
+        window.alert('Geocoder failed due to: ' + status);
+      }
+    });
+}
+}
+
+
+function initMap() {
+
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 13,
+    center: {lat: 26.9124, lng: 75.7873},
+    mapTypeId: 'terrain',
+    disableDefaultUI: true
+  });
+
+  // This event listener will call addMarker() when the map is clicked.
+  map.addListener('click', function(event) {
+    addMarker(event.latLng);
+  });
+
+  document.getElementById('stop_location').value = 'Loading...';
+  document.getElementById('stop_location').disabled = true;
+  // Adding search box to the map
+  // var input = document.getElementById('map_search');
+  // var searchBox = new google.maps.places.SearchBox(input);
+  // map.controls[google.maps.ControlPosition.TOP].push(input);
+
+
+    window.onload = function() {
+      document.getElementById('stop_location').value = '';
+      document.getElementById('stop_location').disabled = false;
+      var pickup = document.getElementById('stop_location');
+      var maps_search = document.getElementById('maps_search');
+      var cur_loc = {
+      lat : 26.922070,
+      lng :  75.778885
+      };
+      var circle = new google.maps.Circle({
+        center: cur_loc,
+        radius: 60
+      });
+      var current = getCurrentLoc();
+      var mylat = current.lat();
+      var mylng = current.lng();
+
+      var marker = new google.maps.Marker({
+            position: {lat: mylat, lng:mylng},
+            map: map,
+            title: "Your location",
+            draggable: true,
+        });
+
+        google.maps.event.addListener(marker, 'dragend', function (event) {
+
+          document.getElementById('stop_location_lat').value = event.latLng.lat().toFixed(6);
+          document.getElementById('stop_location_lng').value = event.latLng.lng().toFixed(6);
+
+          var geocoder = new google.maps.Geocoder();
+
+          geocoder.geocode({'latLng': event.latLng}, function (results, status) {
+         if(status == google.maps.GeocoderStatus.OK) {           // if geocode success
+        document.getElementById('maps_search').value = results[0].formatted_address;
+        var location = event.latLng;
+        var add = results[0].formatted_address;
+         var infowindow = new google.maps.InfoWindow({
+              content:" "
+           });
+
+           lat = location.lat().toFixed(6);
+           lng = location.lng().toFixed(6);
+           full_add = results[0].formatted_address;
+           infowindow.setContent(add + '<button class = "add_pickup" onclick = "setpick()">Add to Pickup</button>' + '<button class = "add_drop" onclick = "setdrop()">Add to Drop</button>');
+           infowindow.open(map,marker);
+
+           setMapOnAll(null);
+           markers.pop();
+           markers.push(infowindow);
+       }
+       });
+    });
+
+    function setMapOnAll(map) {
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(map);
+      }
+    }
+
+
+      var from_places = new google.maps.places.Autocomplete(pickup);
+      from_places.setBounds(circle.getBounds());
+
+      google.maps.event.addListener(from_places, 'place_changed', function() {
+        var from_place = from_places.getPlace();
+        var from_address  = from_place.formatted_address;
+        var geocoder = new google.maps.Geocoder();
+        // document.getElementById('id_picklat').value =   from_place.geometry.location.lat().toFixed(6);
+        // document.getElementById('id_picklong').value = from_place.geometry.location.lng().toFixed(6);
+        $('#origin').val(from_address);
+        if(geocoder){
+           geocoder.geocode({'address':from_address}, function(results, status){
+             if (status == google.maps.GeocoderStatus.OK) {
+                if (status != google.maps.GeocoderStatus.ZERO_RESULTS) {
+                // map.setCenter(results[0].geometry.location);
+                // map.setZoom(16);
+              }
+            }
+           });
+         }
+      });
+
+      var maps_search = new google.maps.places.Autocomplete(maps_search);
+      maps_search.setBounds(circle.getBounds());
+
+      google.maps.event.addListener(maps_search, 'place_changed', function() {
+        var from_place = maps_search.getPlace();
+        var from_address  = from_place.formatted_address;
+        var geocoder = new google.maps.Geocoder();
+        // document.getElementById('id_picklat').value =   from_place.geometry.location.lat().toFixed(6);
+        // document.getElementById('id_picklong').value = from_place.geometry.location.lng().toFixed(6);
+        $('#origin').val(from_address);
+        if(geocoder){
+           geocoder.geocode({'address':from_address}, function(results, status){
+             if (status == google.maps.GeocoderStatus.OK) {
+                if (status != google.maps.GeocoderStatus.ZERO_RESULTS) {
+                map.setCenter(results[0].geometry.location);
+                marker.setPosition(results[0].geometry.location);
+                map.setZoom(16);
+              }
+            }
+           });
+         }
+      });
+
+
+      var maps_overlay = document.getElementById('maps_overlay');
+      var closeMap = document.getElementById('closeMap');
+      var map_marker = document.getElementsByClassName('map_marker')[0];
+      map_marker.onclick = function(){
+        maps_overlay.style.display = "block";
+      }
+      closeMap.onclick = function(){
+        maps_overlay.style.display = "none";
+      }
+}
+}
+
+function setAddressfromMap(){
+  document.getElementById('stop_location').value = document.getElementById('maps_search').value;
+  var maps_overlay = document.getElementById('maps_overlay');
+  maps_overlay.style.display = "none";
+}
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDV--RWSFF8_6LWSGPd4fTAzI5RylVF2c0&callback=initMap"
+  async defer></script>
+
+<div id="stops_container">
+  <h2>Add Stops, task description and contact.</h2>
+  <div id="stop">
+  <label for="stop_task">Task Description</label>
+  <input type="text" id="stop_task" autofocus placeholder="Short description of task" size=30%>
+  <label for="stop_location" style="margin-top:20px">Address</label>
+
+  <div id="stop_address_div">
+  <input type="text" id="stop_location" size=23% >
+  <img src="{% static 'current_loc.png' %}" alt="current_loc" class="current_loc" onclick="getCurrentLoc()">
+  <img src="{% static 'map_marker.png' %}" alt="map_marker" class="map_marker">
+</div>
+  <div>
+  <input type="text" id="stop_flatNum" placeholder="Flat/House No." size=10%>
+  <input type="text" id="stop_landmark" placeholder="Building/Landmark" size=10%>
+  </div>
+  <div>
+    <input type="text" id="stop_location_lat" style="display:none;">
+    <input type="text" id="stop_location_lng" style="display:none;">
+  </div>
+
+  <label for="stop_contact" style="margin-top:20px">Contact Person</label>
+  <input type="text" id="stop_contact" placeholder="Contact at stop" size=30% >
+  <input type="button" id="stop_add" value="Add Task" onclick="newElement()">
+</div>
+
+<div id="maps_overlay" class="maps_overlay">
+  <span class="closeMap" id="closeMap">X</span>
+  <div style="display:flex; justify-content:center;margin-bottom:10px;">
+  <input type="text" id="maps_search" size=30% autofocus placeholder="Search a location...">
+  </div>
+  <div style="display:flex; justify-content:center; color: white;">
+    <p style="margin:0;">Drag the marker on the map to set to the desired location.</p>
+  </div>
+  <div id="map" style="height: 400px; width: 90%;">
+  </div>
+  <div style="display:flex; justify-content:center;margin-top:5px;">
+    <input type="button" id="map_button" value="Done" onclick="setAddressfromMap()">
+  </div>
+</div>
+
+<div id="stops_list">
+  <ul id="each_stop">
+  </ul>
+</div>
+</div>
+
+<footer>
+<form action="{% url 'users:other_tasks' %}" method="post" class="site-form" autocomplete="off">
+  {% csrf_token %}
+  {{ form }}
+  <input type="submit" name="" value="Continue" id = "stop_continue">
+</form>
+</footer>
+
+{% endblock %}
+{% block title %}
+Fridel | Other Tasks
+{% endblock %}

@@ -14,7 +14,31 @@ function setexec_location(lat, lng, add){
 }
 
 function initMap() {
-
+  if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  }
+  else{
+    alert("Location is not supported by your browser.");
+  }
+  function showPosition(position) {
+    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    var geocoder = new google.maps.Geocoder;
+    var stop_location =
+    geocoder.geocode({'location': latlng}, function(results, status){
+      if(status === 'OK')
+      {
+        if(results[0]){
+          document.getElementsByClassName('exec_cur_location')[0].value = results[0].formatted_address;
+        }
+        else{
+          window.alert('Unable to find current location!');
+        }
+      }
+      else{
+        window.alert('Geocoder failed due to: ' + status);
+      }
+    });
+}
 
    var jaipur = {lat: 26.9124, lng: 75.7873};
 
@@ -219,7 +243,6 @@ function get_distance(){
       }
 
 window.onload = function(){
-  document.getElementById('id_live_location').setAttribute("style", "display: none;");
   document.getElementById('id_Amount').readOnly = true;
   document.getElementById('id_Duration').readOnly = true;
   document.getElementById('id_Duration_pick_drop').readOnly = true;
@@ -236,15 +259,39 @@ window.onload = function(){
       var dist_exec_pick = document.getElementsByClassName('dist_exec_pick')[0].value;
       var dist_exec_drop = document.getElementsByClassName('dist_exec_drop')[0].value;
       var dist_drop_pick = document.getElementsByClassName('dist_drop_pick')[0].value;
+      console.log("Drop to executive: ", dist_exec_drop);
+      console.log("Executive to pickup: ", dist_exec_pick);
+      console.log("Pickup to drop: ", dist_drop_pick);
+
+      var now = new Date();
+      var closeTime = new Date();
+      closeTime.setHours(20);
+      closeTime.setMinutes(30);
+      var is_night = (now.getTime() >= closeTime.getTime());
       if(dist_exec_pick != " " && dist_exec_drop != " " && dist_drop_pick != " "){
-        console.log(dist_exec_pick, dist_exec_drop, dist_drop_pick);
-        var amount = dist_exec_pick*2.7 + dist_exec_drop*2.7 + dist_drop_pick*2.7;
-        if(amount <= 15){
-          document.getElementById('id_Amount').value = 15;
-        }
-        else{
-          document.getElementById('id_Amount').value = Math.ceil(amount);
-        }
+        //console.log(dist_exec_pick, dist_exec_drop, dist_drop_pick);
+        // if(is_night)
+        // {
+          var total_distance = (dist_drop_pick*1.0 + dist_exec_drop*1.0 + dist_exec_pick*1.0);
+          var amount = total_distance*2;
+          console.log("Petrol: ", amount);
+
+          if(amount <= 45){
+            document.getElementById('id_Amount').value = 45;
+          }
+          else{
+            document.getElementById('id_Amount').value = Math.ceil(amount);
+          }
+        // }
+        // else{
+        //   var amount = dist_exec_pick*4.5 + dist_exec_drop*4.5 + dist_drop_pick*4.5;
+        //   if(amount <= 50){
+        //     document.getElementById('id_Amount').value = 50;
+        //   }
+        //   else{
+        //     document.getElementById('id_Amount').value = Math.ceil(amount);
+        //   }
+        // }
         clearInterval(myInterval);
       }
     }

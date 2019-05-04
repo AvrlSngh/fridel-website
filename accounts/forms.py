@@ -5,23 +5,22 @@ from django.db import transaction
 from .models import User
 
 class SignUpForm(UserCreationForm):
-    first_name = forms.CharField(label='First Name')
-    last_name = forms.CharField(label='Last Name')
-    email = forms.EmailField(max_length=254, help_text='Required a valid email address.')
+    first_name = forms.CharField(label='First Name', required=False)
+    last_name = forms.CharField(label='Last Name', required=False)
+    # verify_code = forms.IntegerField(required=False)
+    email = forms.EmailField(max_length=254, help_text='Required a valid email address.', required=False)
     # phone_number = forms.RegexField(regex=r'^\+?1?\d{9,15}$')
 
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = (
+        fields = [
                     'username',
-                    'email',
                     'phone',
-                    'first_name',
-                    'last_name',
+                    # 'verify_code',
                     'password1',
                     'password2',
-                )
+                ]
 
     @transaction.atomic
     def save(self, commit=True):

@@ -6,8 +6,8 @@ from users.models import DeliveryInfo
 class ExecutiveInfo(models.Model):
     Locationlat = models.DecimalField(max_digits=10, decimal_places=6, default=None, blank=True)
     Locationlong = models.DecimalField(max_digits=10, decimal_places=6, default=None, blank=True)
-    executive = models.OneToOneField(User, default=None, on_delete=models.CASCADE, primary_key=True, related_name="executive_username")
-    customer = models.OneToOneField(User, default=None, on_delete=models.CASCADE, primary_key=False, related_name="customer_username")
+    executive = models.ForeignKey(User, default=None, on_delete=models.CASCADE, related_name="executive_username")
+    customer = models.ForeignKey(User, default=None, on_delete=models.CASCADE, related_name="customer_username")
     live_location = models.CharField(max_length=100)
     Amount = models.IntegerField(default=None, null=True)
     Duration= models.IntegerField(default=None, null=True)
@@ -16,3 +16,6 @@ class ExecutiveInfo(models.Model):
 
     def __str__(self):
         return str(self.executive)
+
+
+models.ForeignKey(User, default=None, on_delete=models.CASCADE, related_name="customer_username")

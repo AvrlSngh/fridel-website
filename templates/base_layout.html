@@ -1,18 +1,28 @@
 {% load static from staticfiles %}
+{% load webpush_notifications %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="vapid-key" content="{{ vapid_key }}">
+      {% if user.id %}
+          <meta name="user_id" content="{{ user.id }}">
+      {% endif %}
+  <link href="https://fonts.googleapis.com/css?family=Cairo:300" rel="stylesheet">
+  <link rel="icon" href="{% static 'aibl_title_logo.png' %}">
+  <link rel="stylesheet" href="{% static 'base_styles.css' %}">
+  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.4.1/css/all.css' integrity='sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz' crossorigin='anonymous'>
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
   <title>
     {% block title %}
     {% endblock %}
   </title>
-  <link rel="icon" href="{% static 'aibl_title_logo.png' %}">
-  <link rel="stylesheet" href="{% static 'base_styles.css' %}">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
+
+
 </head>
 <body>
   <div id="wrapper">
@@ -39,6 +49,16 @@
     {% endif %}
   </header>
   <section id="section">
+    <!-- <div>
+        <form id="send-push__form">
+            <h3 class="header">Send a push notification</h3>
+            <p class="error"></p>
+            <input type="text" name="head" placeholder="Header: Your favorite airline 😍">
+            <textarea name="body" id="" cols="30" rows="10" placeholder="Body: Your flight has been cancelled 😱😱😱"></textarea>
+            <button>Send Me</button>
+        </form>
+    </div> -->
+    <!-- {% webpush_button %} -->
     <div id="content">
       {% block content%}
 

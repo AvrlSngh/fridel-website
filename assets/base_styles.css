@@ -1,47 +1,70 @@
 body{
   margin: 0;
-  font-family: 'Gaegu', cursive;
+  font-family: 'Cairo', sans-serif;
 }
 
-/* label[for='id_picklat'], label[for='id_picklong'], label[for='id_droplat'], label[for='id_droplong']
-{
-  display:none;
+*{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(255,255,255,0);
 }
-#id_picklat, #id_picklong, #id_droplat, #id_droplong{
-  display: none;
-} */
-
-/* #map_container{
-  display: none;
-  position: fixed;
-  z-index: 1;
-  padding-top: 100px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.9);
-} */
 
 /* styling the user's order page */
 #map{
-   width: 960px;
-   height: 420px;
    border-radius: 10px;
    box-shadow: 1px 2px 15px 2px;
 }
 
 #maps_form{
   margin-top: 10px;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
 }
 
-#id_pickup, #id_drop, #id_instructions, #id_contact_pick, #id_contact_drop{
+#maps_form input[id="id_pickup"], #maps_form input[id = "id_drop"], #maps_form input[id = "id_instructions"]{
+  width: 90%;
+}
+
+#id_pickup, #id_instructions, #id_contact_pick, #id_pickup_home_number, #id_pickup_landmark{
   margin-bottom: 10px;
   border: none;
   border-bottom: solid 1px #076D37;
   outline: none;
   font-family: 'Open Sans', sans-serif;
+}
+
+#id_instructions{
+  border-bottom: solid 1px black;
+}
+
+label[for="id_pickup"]{
+  color: #076D37;
+  font-size: 30px;
+  font-weight: bolder;
+}
+
+#id_drop, #id_contact_drop, #id_drop_home_number, #id_drop_landmark{
+  margin-bottom: 10px;
+  border: none;
+  border-bottom: solid 1px #e85151;
+  outline: none;
+  font-family: 'Open Sans', sans-serif;
+}
+
+label[for="id_drop"]{
+  color: #e85151;
+  font-size: 30px;
+  font-weight: bolder;
+}
+
+#id_contact_pick, #id_contact_drop{
+  margin-bottom: 40px;
 }
 
 .site-form label[for="id_picklat"], .site-form label[for="id_picklong"], .site-form label[for="id_droplat"], .site-form label[for="id_droplong"]{
@@ -59,19 +82,32 @@ body{
   align-items: center;
 }
 
-.add_pickup{
-  background: transparent;
-  padding: 5px;
+.add_pickup, .add_drop{
+  background: linear-gradient(to right, #076D37, #90CB24);
+  padding: 10px;
   outline: none;
-  border: solid 1px #076D37;
+  border: none;
   border-radius: 30px;
-  float:left;
-  margin-bottom: 5px;
-  margin-top: 5px;
   cursor: pointer;
+  margin-top: 10px;
 }
-
 .add_drop{
+  margin-left: 30px;
+  padding: 10.5px;
+}
+
+#geolocation input{
+  margin-bottom: 10px;
+  border: none;
+  border-bottom: solid 1px #076D37;
+  outline: none;
+  font-family: 'Open Sans', sans-serif;
+  width: 90%;
+}
+
+#geolocation button{
+  margin: 0;
+  margin-bottom: 10px;
   background: transparent;
   padding: 5px;
   outline: none;
@@ -80,7 +116,7 @@ body{
   cursor: pointer;
 }
 
-.add_drop:hover, .add_pickup:hover {
+#geolocation button:hover{
   border: none;
   background: linear-gradient(to right, #076D37, #90CB24);
   padding: 6px;
@@ -94,33 +130,30 @@ body{
   grid-template-rows: auto 1fr auto;
   grid-gap: 20px;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   margin: 0 auto;
 }
 
 #header{
   grid-column: 1/4;
-  padding: 20px;
-  padding-top: 0;
-  padding-bottom: 0;
-  background: white;
+  padding: 10px;
+  background: #1b1b1c;
   box-shadow: 1px 0px 20px 0.1px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-bottom-left-radius: 50px;
-  border-bottom-right-radius: 50px;
   overflow-x: hidden;
   overflow-y: hidden;
 }
 
 #home_logo{
   display: flex;
+  justify-content: space-around;
   align-items: center;
 }
 
 #home_logo img{
-  height: 80px;
-  width: 150px;
+  height: 40px;
+  width: 120px;
 }
 
 #header nav{
@@ -178,6 +211,13 @@ body{
   box-shadow: 1px 2px 15px 2px;
   letter-spacing: 1px;
   font-size: 14px;
+}
+
+#order{
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Styling the confirm page */
@@ -263,16 +303,10 @@ body{
   background: transparent;
   padding: 10px;
   outline: none;
-  border: solid 1px #076D37;
-  margin-top: 10px;
-  border-radius: 30px;
-}
-
-.site-form input[type="submit"]:hover{
   border: none;
   background: linear-gradient(to right, #076D37, #90CB24);
-  cursor: pointer;
-  /* padding: 11px; */
+  margin-top: 10px;
+  border-radius: 30px;
 }
 
 #login-page{
@@ -303,7 +337,7 @@ body{
   display: flex;
   flex-flow: column;
   text-align: center;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
 }
 
@@ -458,6 +492,411 @@ body{
   flex-flow: row;
 }
 
+/* Styling the other tasks page */
+#stop_container{
+  display: flex;
+  flex-flow: column;
+}
+
+#stop{
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#stop_location{
+border: none;
+border-bottom: none;
+outline: none;
+}
+
+
+#stop, #stop_task, #stop #stop_contact, #stop #stop_flatNum, #stop #stop_landmark{
+  border: none;
+  border-bottom: solid 1px #076D37;
+  outline: none;
+}
+#stop_add{
+  background: transparent;
+  padding: 10px;
+  outline: none;
+  border: solid 1px #076D37;
+  margin-top: 10px;
+  border-radius: 30px;
+}
+
+
+#stop_add:hover{
+  border: none;
+  padding: 11px;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  cursor: pointer;
+}
+
+#each_stop{
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+#stops_list{
+  margin-top: 20px;
+}
+
+#stop_point{
+  list-style-type: none;
+  padding: 10px;
+  border: none;
+  border-radius: 15px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  background: linear-gradient(to bottom right, #e0e2de, white);
+  margin-bottom: 20px;
+  box-shadow: 0.1px 4px 20px 0.1px;
+  font-size: 24px;
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+#stop_point li{
+  font-size: 14px;
+}
+
+#each_stop span{
+  float:right;
+  font-size: 24px;
+  color: #b20c1f;
+  font-weight: bolder;
+  margin-left: 10px;
+}
+
+#each_stop span:hover{
+  cursor:pointer;
+  transform: scale(1.1);
+}
+
+#stop_address_div{
+  display: flex;
+  border: none;
+  border-bottom: solid 1px #076D37;
+  outline: none;
+}
+
+#stop_address_div img{
+  height: 20px;
+  transition: 0.3s;
+}
+
+#stop_address_div img:hover{
+  cursor:pointer;
+  transform: scale(1.1);
+}
+
+.current_loc{
+  margin-right: 10px;
+  padding-left: 3px;
+}
+
+
+#maps_overlay{
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  padding-top: 80px;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.9);
+  -webkit-animation-name: zoom;
+  -webkit-animation-duration: 0.6s;
+  animation-name: zoom;
+  animation-duration: 0.6s;
+}
+
+/* Styling the final confirmation page of executive */
+#other_task_each_stop{
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+#other_task_each_stop li{
+  list-style-type: none;
+  clear: both;
+
+}
+
+#other_task_list_parent{
+  border: 1px solid #076D37;
+  max-width: 80%;
+  word-wrap: break-word;
+  margin-top: 20px;
+  padding: 10px;
+  font-size: 24px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 15px 2px;
+}
+
+#other_task_list_parent a{
+  color: green;
+}
+
+#other_task_list_parent li:nth-child(1){
+  font-size: 16px;
+}
+
+#other_task_list_parent li:nth-child(2), #other_task_list_parent li:nth-child(3){
+  font-size: 14px;
+}
+
+#other_task_list_parent li:nth-child(4){
+  font-size: 18px;
+}
+
+#id_task_detail{
+  display: none;
+}
+
+#id_other_task{
+  display: none;
+}
+
+label[for = "id_other_task"], label[for = "id_task_detail"]{
+  display: none;
+}
+@-webkit-keyframes zoom {
+    from {-webkit-transform:scale(0)}
+    to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+    from {transform:scale(0)}
+    to {transform:scale(1)}
+}
+
+#maps_search{
+  outline:none;
+  padding: 5px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  width: 50%;
+}
+
+#map{
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  top: 0
+}
+
+#closeMap{
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+#closeMap:hover{
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+#map_button{
+  border: none;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  padding: 10px;
+  outline: none;
+  margin-top: 10px;
+  border-radius: 30px;
+}
+
+#map_button:hover{
+  cursor:pointer
+}
+
+.close i{
+  font-size: 20px;
+}
+
+#stop_continue{
+  padding: 15px;
+  padding-left: 50px;
+  padding-right: 50px;
+  font-size: 24px;
+}
+
+.warnings p{
+  color: red;
+  margin: 0;
+  text-align: center;
+}
+
+.warnings{
+  display: flex; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+  align-items: center;
+  justify-content: center;
+}
+
+.warnings_content{
+  /* background-color: #fefefe; */
+  margin: auto;
+  padding: 20px;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid #888; */
+}
+
+.warnings_content button{
+  border: none;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  padding: 10px;
+  outline: none;
+  margin-top: 10px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.warnings_content ul{
+  padding: 0 5%;
+}
+
+.warnings_content ul li{
+  padding: 2% 0;
+  color: white;
+  font-size: 20px;
+}
+
+label[for="id_first_name"], label[for="id_last_name"], label[for="id_email"], label[for="id_pickup_home_number"], label[for="id_pickup_landmark"], label[for="id_drop_home_number"], label[for="id_drop_landmark"], label[for="id_contact_drop"], label[for="id_contact_pick"], label[for="id_other_package_content"]{
+  display: none;
+}
+
+#id_email, #id_first_name, #id_last_name{
+  display: none;
+}
+
+#pickup_action, #drop_action{
+  position: absolute;
+  float: left;
+}
+
+/* styling the verify phone page */
+
+.verify_phone_page_form{
+  margin-top: 10%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#verify_phone_page_button, #verify_phone_page_resend{
+  border: none;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  padding: 10px 20px;
+  outline: none;
+  margin-top: 10px;
+  border-radius: 30px;
+  cursor: pointer;
+
+}
+
+#verify_phone_page_resend{
+  margin-left: 10px;
+}
+
+#verify_phone_text{
+  margin-bottom: 10px;
+  border: none;
+  border-bottom: solid 1px #076D37;
+  outline: none;
+  text-align: center;
+}
+
+#pickup_more, #drop_more{
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+}
+
+#id_pickup_landmark, #id_drop_landmark, #id_pickup_home_number, #id_drop_home_number{
+  margin-left: 10px;
+  margin-bottom: 20px;
+  width: 35%;
+}
+
+#id_package_content{
+  border: none;
+  border-bottom: solid 1px black;
+  outline: none;
+  margin-top: 0px;
+  text-align: center;
+  width: 90%;
+}
+
+label[for='id_package_content'], label[for='id_instructions']{
+  font-weight: bolder;
+  font-size: 24px;
+}
+
+label[for='id_instructions']{
+  margin-top: 40px;
+}
+
+#id_other_package_content{
+  display: none;
+  border: none;
+  border-bottom: solid 1px black;
+  outline: none;
+  margin-top: 20px;
+  width: 90%;
+}
+
+#locate_on_map{
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  padding: 10px;
+  outline: none;
+  border: none;
+  margin-bottom: 30px;
+  border-radius: 30px;
+  background: linear-gradient(to right, #076D37, #90CB24);
+  cursor: pointer;
+  width: 90%;
+}
+
+#locate_on_map img{
+  width: 24px;
+  height: 24px;
+}
 
 @media screen and (max-width: 720px){
   #login_art img{
@@ -477,6 +916,7 @@ body{
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 5px;
   }
+
   #order-detail h1, h2, h3, h4, h5{
     text-align: center;
     font-size: 10px;
@@ -492,5 +932,14 @@ body{
 
   #tc_heading h1{
     font-size: 13px;
+  }
+
+  #maps_search{
+    width: 90%;
+    padding: 10px;
+  }
+
+  #maps_overlay h1{
+    padding: 10px;
   }
 }

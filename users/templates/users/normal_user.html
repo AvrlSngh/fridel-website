@@ -1,8 +1,15 @@
 {% extends 'base_layout.html' %}
 
 {% block content %}
+  <div id="dashboard_normal">
+    <h2>{{error_text}}</h2>
+  </div>
   <div id="user_actions">
-    <a href="{% url 'users:pickupdrop'%}">Place an Order</a>
+    {% if not recent_order.is_confirmed or not recent_order.user_read%}
+    <a href="{% url 'users:delivery_details'%}" style="background: linear-gradient(to right, #e23e28, #262423);border:none;color:white;">Your Recent Order</a>
+    {% endif %}
+    <a href="{% url 'users:pickupdrop'%}">Pickup & Drop</a>
+    <a href="{% url 'users:other_tasks'%}">Other Tasks</a>
     <a href="https://goo.gl/forms/v2cBZ0uoyZLkQ4t72" target="_blank">Give FeedBack</a>
     <a href="{% url 'users:orders_history'%}">Order History</a>
   </div>

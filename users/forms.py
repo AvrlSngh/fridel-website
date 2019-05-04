@@ -4,12 +4,18 @@ from users import models
 class GetPickupDrop(forms.ModelForm):
     class Meta:
         model = models.DeliveryInfo
-        fields = ['pickup', 'drop', 'contact_pick', 'contact_drop', 'instructions', 'picklat', 'picklong', 'droplat', 'droplong']
+        fields = ['pickup','pickup_home_number', 'pickup_landmark', 'contact_pick', 'drop', 'drop_home_number', 'drop_landmark',
+                    'contact_drop', 'package_content','other_package_content', 'instructions', 'picklat', 'picklong', 'droplat', 'droplong']
 
 class ExecutiveSeen(forms.ModelForm):
     class Meta:
         model = models.DeliveryInfo
         fields = ['is_seen']
+
+class OtherTasksForm(forms.ModelForm):
+    class Meta:
+        model = models.DeliveryInfo
+        fields = ['task_detail','other_task']
 
 
 

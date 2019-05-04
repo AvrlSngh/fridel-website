@@ -2,9 +2,13 @@
 {% block content %}
 <div id="order_detail">
   <div class="order">
+    {% if order.other_task %}
+    <h2>This is a Multiple Task. Click Continue to proceed</h2>
+    {% else %}
     <h2 style="color: #076D37">{{order.pickup}}</h2>
     <h2 style="color: #e85151">{{order.drop}}</h2>
     <h3>{{order.instructions}}</h3>
+     {% endif %}
     <h4>{{order.order_time}}</h4>
     <h4>{{order.date}}</h4>
     <h5>{{order.user}}</h5>

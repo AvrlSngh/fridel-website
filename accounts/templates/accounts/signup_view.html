@@ -2,7 +2,10 @@
 
 {% block content %}
 {% load static from staticfiles %}
+
 <script type="text/javascript">
+
+
   window.onload = function(){
     var phone = document.getElementById('id_phone');
     var format = /^\d{10}$/;
@@ -26,12 +29,15 @@
           signup_button.disabled = true;
         }
   }
+
+
 </script>
 <div id="signup-page">
     <h1 style="text-align: center;">Signup Here</h1>
   <div id="signup_art">
     <img src="{% static 'problem_art6.png' %}" alt="">
   </div>
+  {{error_message}}
   <form method="post" action="{% url 'accounts:signup'%}" class="signup-form">
 
     {% csrf_token %}
@@ -41,7 +47,7 @@
       <input type="checkbox" id="tc_check" onclick="check_tc()">
       <span><p style="padding: 0; font-size: 12px; margin-top: 0;">I by signing up, agree to <a href="{% url 'terms' %}" target="_blank" style="color: #268233">Terms & Conditions</a> of Fridel.</p></span>
     </div>
-    <p style="padding: 0; margin: 0; font-size: 12px;">Have one already? Then <a href="{% url 'accounts:login' %}" style="color: #268233">Login here</a></p>
+    <p style="padding: 0; margin: 0; font-size: 12px;"> Have an Account? Then <a href="{% url 'accounts:login' %}" style="color: #268233">Login here</a></p>
   </form>
   </div>
 {% endblock %}

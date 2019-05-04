@@ -15,7 +15,7 @@ SECRET_KEY = 'mb_wjbh27ix+vt+kuqtq)rxpga!6s@cty=s%!#v%vpf(6#vi3='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -30,7 +30,15 @@ INSTALLED_APPS = [
     'accounts',
     'users',
     'executive',
+    'import_export',
+    'webpush',
 ]
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": "BKNvogr0GVj90vtl5PO7d_HoP5vvLDOxkg1BAuUgv4pWMs8Zcda_RyvhYppLiZ51bjKgnxHPf2Sb6rLuDpoektw",
+    "VAPID_PRIVATE_KEY":"_Tq7-QjUHelSQk10H8i0RGge024BPnha4MmN1uxXoG0",
+    "VAPID_ADMIN_EMAIL": "avrlsngh@gmail.com"
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -119,3 +127,5 @@ STATICFILES_DIRS = (
 AUTH_USER_MODEL = 'accounts.User'
 
 SESSION_SAVE_EVERY_REQUEST = True
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True

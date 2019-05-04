@@ -4,14 +4,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Fridel | Friendly Deliveries</title>
   <link rel="icon" href="{% static 'aibl_title_logo.png' %}">
   <link rel="stylesheet" href="{% static 'home_styles.css' %}">
-  <link href="https://fonts.googleapis.com/css?family=Gaegu" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Cairo:200" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-  <script src="{% static 'main.js'%}"></script>
+  <script>
+// Warning before leaving the page (back button, or outgoinglink)
+window.onbeforeunload = function() {
+   console.log("Don't Leave us");
+   return "Do you really want to leave our brilliant application?";
+};
+</script>
 
 </head>
 <body>
@@ -23,10 +29,10 @@
     </a>
     </div>
     <div id="accounts_links">
-      <ul>
+      <ul style="padding:0; margin:0;">
         {% if not user.is_authenticated %}
-        <li class="login-link"><a href="{% url 'accounts:login'%}">Login</a></li>
-        <li class="signup-link"><a href="{% url 'accounts:signup'%}">Signup</a></li>
+        <li class="login-link"><a href="{% url 'accounts:login'%}">Order Now</a></li>
+        <!-- <li class="signup-link"><a href="{% url 'accounts:signup'%}">Order on &nbsp</a><img src="{% static 'whatsapp_icon.png' %}" alt=""></li> -->
         {% elif user.is_authenticated and user.is_executive %}
         <li class="homepage_executive_dashboard"><a href="{% url 'executive:executive_user'%}">Go to Dashboard</a></li>
         {% elif user.is_authenticated %}
@@ -35,7 +41,7 @@
 
       </ul>
     </div>
-    <div id="site-bar">
+    <!-- <div id="site-bar">
       <ul>
         <li class="site-nav1" style="background: linear-gradient(to right, #076D37, #90CB24);">Your Pain</li>
         <li class="site-nav2">Solution</li>
@@ -43,31 +49,95 @@
         <li class="site-nav4">Place Order</li>
         <li class="site-nav5">Contact Us</li>
       </ul>
-    </div>
+    </div> -->
   </header>
+  <!-- <section id="slideshow_section">
+    <div class="slideshow-container">
+
+<div class="mySlides fade">
+  <div class="numbertext">Chai Sutta Bar</div>
+  <img src="{% static 'chaisuttabar.png' %}" style="width:100%">
+  <div class="text">
+    <p>Get the amazeness of Chai Sutta Bar at your doorstep with Fridel in no time.</p>
+    <p>Order Now!</p>
+  </div>
+</div>
+
+<div class="mySlides fade">
+  <div class="numbertext">The Mr. Paanwala</div>
+  <img src="{% static 'paanwala.png' %}" style="width:100%">
+  <div class="text">
+    <p>Taste every bit of The Mr. Paanwala at your home with Fridel in no time.</p>
+    <p>Order Now!</p>
+  </div>
+</div>
+
+<div class="mySlides fade">
+  <div class="numbertext">Achanak Juice</div>
+  <img src="{% static 'juicebar.png' %}" style="width:100%">
+  <div class="text">
+  <p>Stay healthy and fresh with natural juices of Achanak Juice.</p>
+  <p>Order Now!</p>
+</div>
+</div>
+
+<a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+<a class="next" onclick="plusSlides(1)">&#10095;</a>
+
+</div>
+
+<br>
+
+<div style="text-align:center">
+  <span class="dot" onclick="currentSlide(1)"></span>
+  <span class="dot" onclick="currentSlide(2)"></span>
+  <span class="dot" onclick="currentSlide(3)"></span>
+</div>
+
+  </section> -->
   <section id="section">
-  <div id="problem_section">
-    <div id="problem_text">
-    <div class="text1" style="display:block;"><h1>Got tired of roaming around the city for your daily personal and professional needs?</h1></div>
-    <div class="text2" style="display:none;"><h1> Relax, Fridel is here to help you out from your daily delivery needs. Now get rid from the tasks like Pickup and Drop of any items.</h1></div>
-    <div class="text3" style="display:none;">
-      <h1>Now, after you <a href="{% url 'accounts:signup'%}">signup</a> we can bring or deliver anything that you have forgotten, or want from any of your Friends/Relatives, even from your workspace from and to any part of Jaipur</h1>
-    </div>
-    <div class="text4" style="display:none;">
-      <h1>Hey, what are you waiting for place an order and invest your time in your important stuff, not in these daily unproductive delivery tasks. Right?</h1>
-      <h1><a href="{% url 'users:pickupdrop'%}">Place order</a></h1>
-    </div>
-    <div class="text5" style="display:none;">
-      <h1>Listen, Still Troubled?
-        <h2 style="color: #076D37; text-align: center;">Feel free to call us</h2>
-        <h3 style="color: #076D37; text-align: center; font-size: 24px;">+917891493322, +918005966488</h3>
-        <h4 style="font-size: 18px;">These Fridelers will surely sort out your remaining queries.😊</h4>
-      </h1>
-    </div>
-    </div>
-      <div id="problem_art">
-      <img src="{% static 'problem_art1.png' %}" alt="" id="problem_art_img">
+
+    <div id="text1">
+
+      <div class="text1_div1">
+        <img src="{% static 'delivery_boy.png' %}" alt="problem_art1">
       </div>
+
+      <div class="text1_div2">
+        <h1>We deliver your Needs.</h1>
+      </div>
+    </div>
+
+  <div id="text2">
+     <div class="text2_div1">
+       <h1>Deliver anything you want, <br>Anywhere you want.</h1>
+      </div>
+      <div class="text2_div2">
+        <img src="{% static 'delivery_scooter.png' %}" alt="problem_art2">
+      </div>
+  </div>
+
+
+    <!--
+    <div id="text3">
+      <img src="{% static 'problem_art3.jpg' %}" alt="problem_art3">
+      <h1>After you <a href="{% url 'accounts:signup'%}">signup</a> we can bring or deliver anything that you have forgotten, or want from any of your Friends/Relatives, even from your workspace from and to any part of Jaipur.</h1>
+    </div>
+    <div id="text4">
+      <img src="{% static 'problem_art4.png' %}" alt="problem_art4">
+      <h1>What are you waiting for, place an order and invest your time in your important stuff, not in these daily unproductive delivery tasks. Right?
+        <br><a href="{% url 'users:pickupdrop'%}">Place order</a></h1>
+
+    </div> -->
+    <div id="text5">
+      <div class="text5_headers">
+
+      <h1>Still Troubled?</h1>
+        <h2 style="text-align: center;">Feel free to contact us.</h2>
+        <h3 style="text-align: center; font-size: 28px;"><a href="tel:+916367262034" style="color: black">+916367262034</a>, <a href="tel:+918005966488"  style="color: black">+918005966488</a></h3>
+        <h3 style="text-align: center; font-size: 28px;"><a href="mailto:iamfridel@gmail.com" style="color: black">iamfridel@gmail.com</a></h3>
+        <h4 style="font-size: 22px;">These Fridelers will surely sort out your remaining queries.😊</h4>
+        </div>
     </div>
     </section>
     <footer id="footer">

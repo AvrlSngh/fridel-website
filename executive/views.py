@@ -7,23 +7,77 @@ from accounts.decorators import executive_required
 from executive.models import ExecutiveInfo
 from django.contrib.auth.decorators import login_required
 from accounts.models import User, order_id_count
+from webpush import send_user_notification
 import datetime
+from django.conf import settings
+
+# ============================================================================================================================
 
 
-# view function for executives
+                                                    # EXECUTIVE USER
+
 @executive_required
 def executive_user(request):
+    webpush_settings = getattr(settings, 'WEBPUSH_SETTINGS', {})
+    vapid_key = webpush_settings.get('VAPID_PUBLIC_KEY')
+    user = request.user
     orders = DeliveryInfo.objects.all().order_by('-date')
-    # username = orders.username
-    # phone = User.objects.get(username = username).phone
-    return render(request, 'executive/executive_view.html', {'orders': orders})
+    return render(request, 'executive/executive_view.html', {'orders': orders, user: user, 'vapid_key': vapid_key})
+
+
+
+# ============================================================================================================================
+
+                                                    #GET EXECUTIVE LOCATION
+
+@executive_required
+def get_executivelocation(request):
+    if request.method == 'POST':
+        form = forms.GetExec_Location(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.executive = request.user
+
+            # ------------------------------------------------------
+            info = ExecutiveInfo.objects.filter(executive=request.user)
+            executive = info[len(info)-1]
+            # ------------------------------------------------------
+
+            id = executive.order_id
+            instance.order_id = id
+            instance.customer = executive.customer
+            query = DeliveryInfo.objects.get(id=id)
+            query.amount = instance.Amount
+            query.duration_exec_pick = instance.Duration
+            query.duration_pick_drop = instance.Duration_pick_drop
+            instance.save()
+            query.is_confirmed = True
+            query.save()
+            return redirect('executive:user_confirmation')
+
+
+    else:
+        form = forms.GetExec_Location()
+
+        # ------------------------------------------------------
+        info = ExecutiveInfo.objects.filter(executive=request.user)
+        executive = info[len(info)-1]
+        # ------------------------------------------------------
+
+        id = executive.order_id
+        order = DeliveryInfo.objects.get(id=id) # PROBLEM ARISES HERE BLOODY SHIT...!!!!
+    if order.other_task:
+        return render(request, 'executive/confirm_other.html', {'form':form, 'order':order})
+    else:
+        return render(request, 'executive/confirm2.html', {'form':form, 'order':order})
+
+
+# ============================================================================================================================
+
+                                                    # ORDER DETAIL
 
 @executive_required
 def order_detail(request, id):
-    # return HttpResponse(id)
-    # global exec_read
-    # exec_read = True
-    # global uid
     order = DeliveryInfo.objects.get(id=id)
     order.exec_read = True
     order.is_seen = True
@@ -41,13 +95,20 @@ def order_detail(request, id):
         return redirect('executive:executive_location')
     order.save()
 
-    # global user_read
-    # user_read = False
     return render(request, 'executive/confirm.html', {'order':order})
+
+
+# ============================================================================================================================
+
+                                                    # USER CONFIRMATION
 
 @executive_required
 def user_confirmation(request):
-    executive = ExecutiveInfo.objects.get(executive=request.user)
+    # ------------------------------------------------------
+    info = ExecutiveInfo.objects.filter(executive=request.user)
+    executive = info[len(info)-1]
+    # ------------------------------------------------------
+
     id = executive.order_id
     print(id)
     query = DeliveryInfo.objects.get(id=id)
@@ -60,7 +121,12 @@ def user_confirmation(request):
             query.is_completed = True
             query.save()
             order = DeliveryInfo.objects.get(id=id)
-            exec_coming = ExecutiveInfo.objects.get(customer=executive.customer)
+
+            # ------------------------------------------------------
+            info = ExecutiveInfo.objects.filter(customer=executive.customer)
+            exec_coming = info[len(info)-1]
+            # ------------------------------------------------------
+
             customer = User.objects.get(username = str(order.user))
             customer_phone = customer.phone
             user_agree_text = 'Congo!!! Customer is agreed on the amount..'
@@ -69,75 +135,40 @@ def user_confirmation(request):
             executive_wait_text = 'Please wait while user confirms the price and time.!!'
             return render(request, 'executive/confirm3.html', {'executive_wait_text':executive_wait_text})
 
-@executive_required
-def get_executivelocation(request):
-    if request.method == 'POST':
-        form = forms.GetExec_Location(request.POST)
-        if form.is_valid():
-            # save article to db
-            instance = form.save(commit=False)
-            instance.executive = request.user
-            executive = ExecutiveInfo.objects.get(executive=request.user)
-            id = executive.order_id
-            instance.order_id = id
-            instance.customer = executive.customer
-            query = DeliveryInfo.objects.get(id=id)
-            query.amount = instance.Amount
-            query.duration_exec_pick = instance.Duration
-            query.duration_pick_drop = instance.Duration_pick_drop
-            instance.save()
-            query.is_confirmed = True
-            query.save()
-            # if uid != 0:
-            #     query = DeliveryInfo.objects.get(id=uid)
-            #     query.is_completed = True
-            #     query.save()
-            # else:
-            #     print("is zero", id)
-            return redirect('executive:user_confirmation')
 
+# ============================================================================================================================
 
-    else:
-        form = forms.GetExec_Location()
-        executive = ExecutiveInfo.objects.get(executive=request.user)
-        id = executive.order_id
-        order = DeliveryInfo.objects.get(id=id) # PROBLEM ARISES HERE BLOODY SHIT...!!!!
-    return render(request, 'executive/confirm2.html', {'form':form, 'order':order})
-
-# view functions for users
-
+                                                        # GET PIKCUP DROP
 @login_required(login_url="/accounts/login/")
 def get_pickupdrop(request):
     if request.method == 'POST':
         form = user_form.GetPickupDrop(request.POST)
         if form.is_valid():
-            # save article to db
             instance = form.save(commit=False)
             instance.user = request.user
 
             count = order_id_count.objects.get(id=1)
             count.count_id = count.count_id + 1
-            # instance.id = request.user.id
             instance.id = count.count_id
             now = datetime.datetime.now()
             instance.order_time = now.strftime("%H:%M")
             instance.date = now.strftime("%Y-%m-%d")
-            # global is_confirmed
-            # is_confirmed = False
             instance.save()
+
             query = User.objects.get(username=request.user)
             query.recent_order_id = count.count_id
             count.save()
             query.save()
-            # query =  DeliveryInfo.objects.get(user=request.user).order_by('-id')[0]
-            # query.is_confirmed = False
-            # query.save()
             return redirect('users:delivery_details')
 
     else:
         form = user_form.GetPickupDrop()
     return render(request, 'users/pickup_drop_details.html',{'form':form})
 
+
+# ============================================================================================================================
+
+                                                    # DELIVERY DETAILS
 
 @login_required(login_url="/accounts/login/")
 def delivery_details(request):
@@ -147,12 +178,13 @@ def delivery_details(request):
     # will have to write an if condition to see if the order is confirmed by executive or not
     print(is_confirmed)
     if is_confirmed is True:
-        exec_coming = ExecutiveInfo.objects.get(customer=request.user)
-        # exec_username = exec_coming.executive
-        # exec_details = User.objects.get(username = exec_username)
+
+        # ------------------------------------------------------
+        info = ExecutiveInfo.objects.filter(order_id=request.user.recent_order_id) # To store the query set in order to retrieve last element
+        exec_coming = info[len(info)-1]
+        # ------------------------------------------------------
+
         exec_read = query.exec_read
-        # global user_read
-        # user_read = True
         return render(request, 'users/delivery_details.html', {'exec_coming':exec_coming, 'exec_read':exec_read})
     else:
         wait_text = 'Please Wait till our executive give confirmation!'
@@ -160,15 +192,38 @@ def delivery_details(request):
         query.is_confirmed = False
         return render(request, 'users/delivery_details.html', {'wait_text':wait_text})
 
+
+# ============================================================================================================================
+
+                                                    # FINAL CONFIRMATION
+
 @login_required(login_url="/accounts/login/")
 def final_confirmation(request):
     query = DeliveryInfo.objects.get(id = request.user.recent_order_id)
     query.user_read = True
+    is_other = False
+    if query.other_task:
+        is_other = True
     query.save()
-    exec_coming = ExecutiveInfo.objects.get(customer=request.user)
+
+    # ------------------------------------------------------
+    info = ExecutiveInfo.objects.filter(customer=request.user)
+    exec_coming = info[len(info)-1]
+    # ------------------------------------------------------
+
     exec_username = exec_coming.executive
     exec_details = User.objects.get(username = exec_username)
-    return render(request, 'users/final_confirmation.html', {'exec_coming':exec_coming, 'exec_details':exec_details})
+
+    # checking the checkbox of offer_claimed when user got the details of executive
+    request.user.offer_claimed = True
+    request.user.save()
+
+    return render(request, 'users/final_confirmation.html', {'exec_coming':exec_coming, 'exec_details':exec_details, 'is_other':is_other})
+
+
+# ============================================================================================================================
+
+                                                    # ORDER CANCEL
 
 @login_required(login_url="/accounts/login/")
 def order_cancel(request):
@@ -176,3 +231,6 @@ def order_cancel(request):
     query.is_canceled = True;
     query.save()
     return redirect('users:normal_user')
+
+
+# x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x

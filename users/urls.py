@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^final_confirmation/$', exec_views.final_confirmation, name = "final_confirmation"),
     url(r'^order_cancel/$', exec_views.order_cancel, name = "order_cancel"),
     url(r'^orders_history/$', views.orders_history, name = "orders_history"),
+    url(r'^other_tasks/$', views.other_task, name = "other_tasks"),
 ]

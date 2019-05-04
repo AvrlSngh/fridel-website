@@ -1,29 +1,21 @@
 {% extends 'base_layout.html' %}
-
+{% load static from staticfiles %}
 {% block content %}
-<!-- <h1>Welcome Normal User. You are so normal!!</h1> -->
-<!-- Maps in the users order page -->
-<h1 style="text-align: center;">Enter the Pickup and Drop points and also some instructions.</h1>
-<div id="map_container">
-<div id="map"></div>
-</div>
-<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 <script>
-
 var map;
 var markers = [];
-var lat = 0, lng = 0, full_add='';
+var lat=0, lng=0, full_add='';
 
 function setpick(){
   var pickup = document.getElementById('id_pickup');
   var picklat = document.getElementById('id_picklat');
   var picklong = document.getElementById('id_picklong');
 
-    addMarker();
-
   picklat.value = lat;
   picklong.value = lng;
   pickup.value = full_add;
+
+  document.getElementById('closeMap').click();
 }
 
 function setdrop(){
@@ -31,66 +23,199 @@ function setdrop(){
   var droplat = document.getElementById('id_droplat');
   var droplong = document.getElementById('id_droplong');
 
-  addMarker();
-
   droplat.value = lat;
   droplong.value = lng;
   drop.value = full_add;
+
+  document.getElementById('closeMap').click();
 }
 
 
 function initMap() {
-  var pickup = document.getElementById('id_pickup');
-  pickup.setAttribute("size", 50);
 
-  var drop = document.getElementById('id_drop');
-  drop.setAttribute("size", 50);
 
   document.getElementById("id_contact_pick").setAttribute("placeholder", "Contact of pickup");
   document.getElementById("id_contact_drop").setAttribute("placeholder", "Contact of drop");
+  document.getElementById("id_instructions").setAttribute("placeholder", "Give instructions to your Frideler");
 
-
-  var jaipur = {lat: 26.9124, lng: 75.7873};
+  // Defining the map
+  var jaipur = {
+    lat: 26.9124,
+    lng: 75.7873
+  };
 
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 13,
     center: jaipur,
-    mapTypeId: 'terrain'
-  });
-
-  // This event listener will call addMarker() when the map is clicked.
-  map.addListener('click', function(event) {
-    addMarker(event.latLng);
+    mapTypeId: 'terrain',
+    disableDefaultUI: true,
+    gestureHandling: 'greedy',
   });
 
     window.onload = function() {
+
+      var maps_overlay = document.getElementById('maps_overlay');
+      var closeMap = document.getElementById('closeMap');
+      var locate_on_map = document.getElementById('locate_on_map');
+      locate_on_map.onclick = function(){
+        event.preventDefault();
+        maps_overlay.style.display = "block";
+      }
+      closeMap.onclick = function(){
+        maps_overlay.style.display = "none";
+      }
+
+      // Package content logic
+      document.getElementById('id_other_package_content').setAttribute("placeholder", "Please specify the content");
+      var package_content = document.getElementById('id_package_content');
+      package_content.onclick = function() {
+
+        if(document.getElementsByTagName('option')[5].selected){
+          document.getElementById('id_other_package_content').style.display = "block";
+        }
+        else{
+            document.getElementById('id_other_package_content').style.display = "none";
+        }
+      }
+
+
+      document.getElementsByTagName('label')[7].textContent = "Whom to contact at drop:";
+      document.getElementsByTagName('label')[6].textContent = "Whom to contact at pickup:";
+
+      var form = document.getElementsByClassName('site-form')[0];
       var pickup = document.getElementById('id_pickup');
       var drop = document.getElementById('id_drop');
-      pickup.focus();
+      pickup.type = "search";
+      drop.type = "search";
+      pickup.onkeydown = function(){
+
+      }
+
+      drop.onkeydown = function(){
+
+      }
+
+
+      // To add home no. and building name fields after pickup
+      var pickup_more = document.createElement("div");
+      pickup_more.setAttribute("id", "pickup_more");
+      var home_number_p = document.getElementById("id_pickup_home_number");
+      pickup_more.appendChild(home_number_p);
+      var landmark_p = document.getElementById("id_pickup_landmark");
+      pickup_more.appendChild(landmark_p);
+      home_number_p.setAttribute("placeholder", "Home/Flat No.");
+      landmark_p.setAttribute("placeholder", "Building Name")
+      pickup.parentNode.insertBefore(pickup_more, pickup.nextSibling);
+
+      // To add home no. and building name fields after drop
+      var drop_more = document.createElement("div");
+      drop_more.setAttribute("id", "drop_more");
+      var home_number_d = document.getElementById("id_drop_home_number");
+      drop_more.appendChild(home_number_d);
+      var landmark_d = document.getElementById("id_drop_landmark");
+      drop_more.appendChild(landmark_d);
+      home_number_d.setAttribute("placeholder", "Home/Flat No.");
+      landmark_d.setAttribute("placeholder", "Building Name")
+      drop.parentNode.insertBefore(drop_more, drop.nextSibling);
+
+      // Check to get the correct location with lat and long. CHEERS:-)!!
+      document.getElementById("form_continue").addEventListener("click", function(event){
+        if(document.getElementById('id_picklat').value==""){
+            event.preventDefault();
+            alert("Please enter the PICKUP location from suggestions or from map!!");
+            pickup.value = "";
+          }
+        if(document.getElementById('id_droplat').value==""){
+            event.preventDefault();
+            alert("Please enter the DROP location from suggestions or from map!!");
+            drop.value = "";
+          }
+        if(document.getElementById('id_package_content').value == "Other"){
+          if(document.getElementById('id_other_package_content').value==""){
+          event.preventDefault();
+          alert("Please Choose or enter the Package Content!!");
+          document.getElementById('id_other_package_content').focus();
+        }
+      }
+      });
+
+
       var cur_loc = {
-      lat : 26.922070,
-      lng :  75.778885
+        lat : 26.922070,
+        lng :  75.778885
       };
+
+      // Defining the radius
       var circle = new google.maps.Circle({
         center: cur_loc,
         radius: 30
       });
-      var from_places = new google.maps.places.Autocomplete(pickup);
-      var to_places = new google.maps.places.Autocomplete(drop);
-      from_places.setBounds(circle.getBounds());
 
-      google.maps.event.addListener(from_places, 'place_changed', function() {
-        var from_place = from_places.getPlace();
-        var from_address  = from_place.formatted_address;
+      // Defining the marker
+      var marker = new google.maps.Marker({
+        position: jaipur,
+        map: map,
+        title: 'Your Location',
+        draggable: true,
+      });
+
+
+      // Code for setting the map on current location
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      }
+      else{
+        alert("Location is not supported by your browser.");
+      }
+      function showPosition(position) {
+        latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        marker.setPosition(latlng);
+        map.setCenter(latlng);
+        map.setZoom(16);
         var geocoder = new google.maps.Geocoder();
-        document.getElementById('id_picklat').value =   from_place.geometry.location.lat().toFixed(6);
-        document.getElementById('id_picklong').value = from_place.geometry.location.lng().toFixed(6);
+        geocoder.geocode({'latLng': latlng}, function (results, status) {
+       if(status == google.maps.GeocoderStatus.OK) {           // if geocode success
+      document.getElementById('maps_search').value = results[0].formatted_address;
+      lat =   results[0].geometry.location.lat().toFixed(6);
+      lng =   results[0].geometry.location.lng().toFixed(6);
+      full_add = results[0].formatted_address;
+      }
+    });
+  }
+
+
+      // Event for marker dragging
+      google.maps.event.addListener(marker, 'dragend', function (event) {
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({'latLng': event.latLng}, function (results, status) {
+       if(status == google.maps.GeocoderStatus.OK) {           // if geocode success
+      document.getElementById('maps_search').value = results[0].formatted_address;
+      lat =   results[0].geometry.location.lat().toFixed(6);
+      lng =   results[0].geometry.location.lng().toFixed(6);
+      full_add = results[0].formatted_address;
+      }
+      });
+      });
+
+
+      // Code for maps search and set of events after that
+      var maps_search = document.getElementById('maps_search');
+      var maps_search = new google.maps.places.Autocomplete(maps_search);
+      maps_search.setBounds(circle.getBounds());
+      google.maps.event.addListener(maps_search, 'place_changed', function() {
+        var from_place = maps_search.getPlace();
+        var from_address  = from_place.formatted_address;
+        full_add = from_address;
+        var geocoder = new google.maps.Geocoder();
+        lat =   from_place.geometry.location.lat().toFixed(6);
+        lng = from_place.geometry.location.lng().toFixed(6);
         $('#origin').val(from_address);
         if(geocoder){
            geocoder.geocode({'address':from_address}, function(results, status){
              if (status == google.maps.GeocoderStatus.OK) {
                 if (status != google.maps.GeocoderStatus.ZERO_RESULTS) {
                 map.setCenter(results[0].geometry.location);
+                marker.setPosition(results[0].geometry.location);
                 map.setZoom(16);
               }
             }
@@ -99,6 +224,20 @@ function initMap() {
       });
 
 
+      // code for pickup field
+      var from_places = new google.maps.places.Autocomplete(pickup);
+      from_places.setBounds(circle.getBounds());
+      google.maps.event.addListener(from_places, 'place_changed', function() {
+        var from_place = from_places.getPlace();
+        var from_address  = from_place.formatted_address;
+        var geocoder = new google.maps.Geocoder();
+        document.getElementById('id_picklat').value =   from_place.geometry.location.lat().toFixed(6);
+        document.getElementById('id_picklong').value = from_place.geometry.location.lng().toFixed(6);
+      });
+
+
+      // code for drop field
+      var to_places = new google.maps.places.Autocomplete(drop);
       to_places.setBounds(circle.getBounds());
       google.maps.event.addListener(to_places, 'place_changed', function(){
         var to_place = to_places.getPlace();
@@ -106,49 +245,10 @@ function initMap() {
         var geocoder = new google.maps.Geocoder();
         document.getElementById('id_droplat').value =   to_place.geometry.location.lat().toFixed(6);
         document.getElementById('id_droplong').value = to_place.geometry.location.lng().toFixed(6);
-        $('#destination').val(to_address);
-        if(geocoder){
-           geocoder.geocode({'address':to_address}, function(results, status){
-             if (status == google.maps.GeocoderStatus.OK) {
-                if (status != google.maps.GeocoderStatus.ZERO_RESULTS) {
-                map.setCenter(results[0].geometry.location);
-                map.setZoom(16);
-              }
-            }
-           });
-         }
       });
-}
 
- }
 
-// Adds a marker to the map and push to the array.
-var addMarker = function (location) {
-   var geocoder;
-   geocoder = new google.maps.Geocoder();
-   var marker = new google.maps.Marker({
-     position: location,
-     map: map
-   });
-   setMapOnAll(null);
-   markers.pop();
-   markers.push(marker);
-   geocoder.geocode({'latLng': location}, function (results, status) {
-  if(status == google.maps.GeocoderStatus.OK) {           // if geocode success
- var add = results[0].formatted_address;
-  var infowindow = new google.maps.InfoWindow({
-       content:" "
-    });
-
-    lat = location.lat().toFixed(6);
-    lng = location.lng().toFixed(6);
-    full_add = results[0].formatted_address;
-    infowindow.setContent(add + '<button class = "add_pickup" onclick = "setpick()">Add to Pickup</button>' + '<button class = "add_drop" onclick = "setdrop()">Add to Drop</button>');
-    infowindow.open(map,marker);
-
-}
-
-});
+  }
 
 }
 
@@ -159,18 +259,56 @@ var addMarker = function (location) {
    }
  }
 
+// To hide the auto shown instructions before taking the orders
+function hide_warnings(){
+  document.getElementById('warnings').style.display = 'none';
+}
+
+
+
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDV--RWSFF8_6LWSGPd4fTAzI5RylVF2c0&callback=initMap"
   async defer></script>
 
+  <div id="maps_overlay" class="maps_overlay">
+    <span class="closeMap" id="closeMap">X</span>
+    <div style="display:flex; justify-content:center; color: white;">
+      <h1 style="font-weight: bolder;" >Search and Drag the marker to set the location.</h1>
+    </div>
+    <div style="display:flex; justify-content:center;margin-bottom:10px; flex-flow: column;align-items: center;">
+    <input type="search" id="maps_search" autofocus placeholder="Search a location...">
+    <div>
+      <button class = "add_pickup" onclick = "setpick()">Add to Pickup</button>
+      <button class = "add_drop" onclick = "setdrop()">Add to Drop</button>
+    </div>
+    </div>
+    <div id="map" style="height: 400px; width: 90%;">
+    </div>
+  </div>
+
+  <div id="warnings" class="warnings">
+    <div class="warnings_content">
+      <p style="font-size: 24px; border-bottom: solid red 0.5px; font-weight: bolder;">Terms of Delivery</p>
+      <ul>
+        <li>Fridel will be unable to deliver a package that cannot be easily carried on a bike.</li>
+        <li>No autos or cabs can be made by delivery executive for delivery.</li>
+        <li>No purchases will be done by delivery executive on any of the store or outlet.</li>
+        <li>Please don't handover any restricted or illegal items.</li>
+      </ul>
+      <button onclick="hide_warnings()">Okay, Continue</button>
+    </div>
+
+  </div>
+
   <div id="maps_form">
     <form action="{% url 'users:pickupdrop' %}" method="post" class="site-form" autocomplete="off">
+      <button id="locate_on_map"><img src="{% static 'map_marker.png' %}" alt="">&nbspLocate On Map</button>
       {% csrf_token %}
       {{ form }}
       <input type="hidden" id="destination" name="destination" required>
       <input type="hidden" id="origin" name="origin" required>
-      <input type="submit" name="" value="Continue">
+      <input type="submit" name="pickupdrop_continue" value="Continue" id="form_continue">
     </form>
   </div>
 

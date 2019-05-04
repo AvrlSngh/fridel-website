@@ -1,0 +1,32 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+{% load static from staticfiles %}
+
+<script type="text/javascript">
+  function skip(){
+    window.location.href = '/users/normal_user';
+  }
+</script>
+<div id="verify_phone-page">
+  <div id="verify_phone_page_notice">
+    <h3>Enter the OTP sent to {{phone_number}}. To complete the verification.</h3>
+    <h2 style="color:maroon;">{{error_text}}</h2>
+  </div>
+  <form action="{% url 'accounts:verify_phone'%}" method="post" class="verify_phone_page_form">
+    {% csrf_token %}
+    <input type="number" id="verify_phone_text" name="verify_phone" placeholder="Enter the OTP...">
+    <div>
+    <input type="submit" value="Verify" id="verify_phone_page_button">
+    <input type="submit" value="Resend" id="verify_phone_page_resend">
+    </div>
+    <a href="{% url 'users:normal_user'%}">Skip</a>
+    <div>
+
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block title %}
+Fridel | Verify Phone
+{% endblock %}
